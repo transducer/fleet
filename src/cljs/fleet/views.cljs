@@ -1,5 +1,8 @@
 (ns fleet.views
-  (:require [fleet.queries :as q]
+  (:require [cljs-web3.core :as web3]
+            [cljs-web3.eth :as web3-eth]
+            [cljsjs.web3]
+            [fleet.queries :as q]
             [fleet.util :refer [debug-panel]]
             [reagent.core :as r]
             [reagent.ratom :refer-macros [reaction]]))
@@ -57,7 +60,7 @@
              :on-change (fn [e]
                           (reset! value (.-target.value e)))}]))
 
-(defn address-manager []
+(defn add-address []
   (let [address (r/atom "")
         weight  (r/atom 0)]
     (fn []
@@ -107,7 +110,8 @@
     (fn []
       [:button.button {:on-click
                        ;; TODO, PUBLISH to BLOCKCHAIN
-                       #(println @parties)}
+                       #(do (println @parties)
+                            (println (blockchain/sha3)))}
        "Publish contract on the blockchain"])))
 
 (defn main-panel []
@@ -121,7 +125,7 @@
       [:div#custom-page
        [page-header]
        [explanation]
-       [address-manager]
+       [add-address]
        [:br]
        [addresses]
        [:br]

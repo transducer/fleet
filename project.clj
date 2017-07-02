@@ -1,8 +1,18 @@
 (defproject fleet "0.1.0-SNAPSHOT"
-  :dependencies [[org.clojure/clojure "1.8.0"]
-                 [org.clojure/clojurescript "1.9.229"]
+  :dependencies [
+
+                 ;; Our beloved Clojure
+                 [org.clojure/clojure "1.9.0-alpha10"]
+                 [org.clojure/clojurescript "1.9.473"]
+
+                 ;; Blockchain
+                 [cljs-web3 "0.19.0-0-2"]
+
+                 ;; Frontend
                  [reagent "0.6.0"]
                  [datascript "0.16.1"]
+
+                 ;; Logging
                  [timbre "0.5.1-SNAPSHOT"]]
 
   :plugins [[lein-auto "0.1.2"]
@@ -11,7 +21,7 @@
 
   :min-lein-version "2.5.3"
 
-  :source-paths ["src/clj"]
+  :source-paths ["src/cljs"]
 
   :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"]
 
