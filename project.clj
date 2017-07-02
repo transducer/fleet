@@ -31,8 +31,7 @@
                              :paths        ["resources/public/contracts/src"]}}
 
   :aliases {"compile-solidity" ["shell" "./compile-solidity.sh"]
-            "start-devnet"     ["shell" "./start-devnet.sh"]
-            "attach-shell"     ["shell" "./attach-shell.sh"]}
+            "start-devnet"     ["shell" "./start-devnet.sh"]}
 
   :profiles
   {:dev

@@ -25,12 +25,10 @@
 (defun start-devnet ()
   (start-process-shell-command "devnet"
                                "devnet"
-                               (concat "cd " fleet-root " && lein auto start-devnet")))
+                               (concat "cd " fleet-root " && lein start-devnet")))
 
 (defun start-attach-shell ()
-  (start-process-shell-command "shell"
-                               "shell"
-                               (concat "cd " fleet-root " && lein auto attach-shell")))
+  (ansi-term (concat fleet-root "/attach-shell.sh") "geth-shell"))
 
 (defun stop-compile-solidity-auto ()
   (message "Stop compiling Solidity Smart Contracts")
@@ -44,7 +42,7 @@
 
 (defun stop-attached-shell ()
   (message "Stop attached shell and check-work")
-  (when-let ((buf (get-buffer "shell")))
+  (when-let ((buf (get-buffer "*geth-shell*")))
     (kill-buffer buf)))
 
 (defun quit-cider (repl-buffer)
@@ -57,9 +55,7 @@
 
 (defun fleet-jack-in* ()
   (find-file (concat fleet-root "/project.clj"))
-  (cider-jack-in-clojurescript)
-  ;; TODO (start-less-auto project)
-  )
+  (cider-jack-in-clojurescript))
 
 (defun fleet-jack-in ()
   (interactive)
