@@ -8,12 +8,12 @@
                  ;; Blockchain
                  [cljs-web3 "0.19.0-0-2"]
 
-                 ;; Frontend
-                 [reagent "0.6.0"]
-                 [datascript "0.16.1"]
+                 ;; HTTP
+                 [cljs-ajax "0.5.8"]
 
-                 ;; Logging
-                 [timbre "0.5.1-SNAPSHOT"]]
+                 ;; Frontend
+                 [datascript "0.16.1"]
+                 [reagent "0.6.0"]]
 
   :plugins [[lein-auto "0.1.2"]
             [lein-cljsbuild "1.1.4"]

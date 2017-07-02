@@ -1,7 +1,5 @@
 (ns fleet.views
-  (:require [cljs-web3.core :as web3]
-            [cljs-web3.eth :as web3-eth]
-            [cljsjs.web3]
+  (:require [fleet.blockchain :as blockchain]
             [fleet.queries :as q]
             [fleet.util :refer [debug-panel]]
             [reagent.core :as r]
@@ -111,7 +109,7 @@
       [:button.button {:on-click
                        ;; TODO, PUBLISH to BLOCKCHAIN
                        #(do (println @parties)
-                            (println (blockchain/sha3)))}
+                            (println (blockchain/unlock-own-account)))}
        "Publish contract on the blockchain"])))
 
 (defn main-panel []
