@@ -4,7 +4,6 @@
             [cljs-web3.eth :as web3-eth]
             [cljs-web3.personal :as web3-personal]
             [cljsjs.web3]
-            [fleet.blockchain :as blockchain]
             [fleet.blockchain.constants :as constants]
             [fleet.queries :as q]
             [goog.string :as string]
@@ -49,6 +48,7 @@
 
 (defn deploy-compiled-code [abi bin]
   (web3-eth/contract-new
+   web3-instance
    (clj->js abi)
    {:gas  constants/max-gas-limit
     :data bin
@@ -57,9 +57,16 @@
 (defn deploy-contract [key]
   (let [{:keys [abi bin]} (fetch-contract key)]
     (println abi bin)
-    #_(deploy-compiled-code abi bin)))
+    ))
 
-(deploy-contract :greeter)
+;; TODO:
+(add-compiled-contract :mortal :bin)
+(deploy-contract :mortal)
+
+(set-active-account)
+(unlock-own-account)
+
+(deploy-compiled-code (clj->js [{:constant false, :inputs [], :name "kill", :outputs [], :payable false, :type :function} {:inputs [], :payable false, :type :constructor}]) (str "0x" "6060604052341561000c57fe5b5b60008054600160a060020a03191633600160a060020a03161790555b5b609c806100386000396000f300606060405263ffffffff60e060020a60003504166341c0e1b581146020575bfe5b3415602757fe5b602d602f565b005b6000543373ffffffffffffffffffffffffffffffffffffffff90811691161415606d5760005473ffffffffffffffffffffffffffffffffffffffff16ff5b5b5600a165627a7a723058209fc9d0ffd32ede3c45bfe55e768fc83bebcd433328c2b4572ce06b53bd483cbb0029"))
 
 ;; When successful:
 ;; {:keys [db]} [contract-key code-type code]
