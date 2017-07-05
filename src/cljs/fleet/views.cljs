@@ -110,7 +110,7 @@
                        ;; TODO, PUBLISH to BLOCKCHAIN
                        #(do (println @parties)
                             (println (blockchain/unlock-own-account)))}
-       "Publish contract on the blockchain"])))
+       "Publish on the blockchain"])))
 
 (defn main-panel []
   (fn []
