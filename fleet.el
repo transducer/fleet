@@ -22,10 +22,10 @@
   (start-process-shell-command "compile-solidity"
                                "compile-solidity"
                                (concat "cd " fleet-root " && lein auto compile-solidity")))
-(defun start-devnet ()
-  (start-process-shell-command "devnet"
-                               "devnet"
-                               (concat "cd " fleet-root " && lein start-devnet")))
+(defun start-local-blockchain ()
+  (start-process-shell-command "local-blockchain"
+                               "local-blockchain"
+                               (concat "cd " fleet-root " && lein start-local-blockchain")))
 
 (defun start-attach-shell ()
   (ansi-term (concat fleet-root "/attach-shell.sh") "geth-shell"))
@@ -35,9 +35,9 @@
   (when-let ((buf (get-buffer "compile-solidity")))
     (kill-buffer buf)))
 
-(defun stop-devnet ()
-  (message "Stop devnet")
-  (when-let ((buf (get-buffer "devnet")))
+(defun stop-local-blockchain ()
+  (message "Stop local blockchain")
+  (when-let ((buf (get-buffer "local-blockchain")))
     (kill-buffer buf)))
 
 (defun stop-attached-shell ()
@@ -67,7 +67,7 @@
   (message "Auto compile Solidity Smart Contracts")
   (start-compile-solidity-auto)
   (message "Start local blockchain")
-  (start-devnet)
+  (start-local-blockchain)
   (sleep-for 5)
   (message "Attach local shell and check-work.js")
   (start-attach-shell))
@@ -75,7 +75,7 @@
 (defun fleet-stop ()
   (interactive)
   (stop-compile-solidity-auto)
-  (stop-devnet)
+  (stop-local-blockchain)
   (stop-attached-shell))
 
 (defun fleet-project-repl (&optional cljs-repl)
@@ -84,7 +84,7 @@
 (defun fleet-quit ()
   (interactive)
   (stop-compile-solidity-auto)
-  (stop-devnet)
+  (stop-local-blockchain)
   (stop-attached-shell)
   (when-let ((repl-buffer (fleet-project-repl)))
     (quit-cider repl-buffer))

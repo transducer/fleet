@@ -30,8 +30,8 @@
   :auto {"compile-solidity" {:file-pattern #"\.(sol)$"
                              :paths        ["resources/public/contracts/src"]}}
 
-  :aliases {"compile-solidity" ["shell" "./compile-solidity.sh"]
-            "start-devnet"     ["shell" "./start-devnet.sh"]}
+  :aliases {"compile-solidity"       ["shell" "./compile-solidity.sh"]
+            "start-local-blockchain" ["shell" "./start-local-blockchain.sh"]}
 
   :profiles
   {:dev
