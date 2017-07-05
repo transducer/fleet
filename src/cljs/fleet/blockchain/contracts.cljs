@@ -40,4 +40,6 @@
                                      (recur (merge acc (async/<! c))
                                             (next chans))
                                      acc))))]
-        (queries/upsert-contract contract-key abi (utils/format-bin bin)))))
+        (queries/upsert-contract contract-key
+                                 (utils/format-abi abi)
+                                 (utils/format-bin bin)))))

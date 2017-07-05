@@ -12,3 +12,6 @@
 
 (defn format-bin [bin]
   (str "0x" bin))
+
+(defn format-abi [abi]
+  (clj->js abi))

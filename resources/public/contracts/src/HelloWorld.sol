@@ -16,12 +16,12 @@ contract greeter is mortal {
   string greeting;
 
   /* this runs when the contract is executed */
-  function greeter(string _greeting) public {
-    greeting = _greeting;
+  function greeter(_greeting) public {
+    greeting = "Hello world";
   }
 
   /* main function */
   function greet() constant returns (string) {
-    return greeting;
+    return "HELLLLOOO";
   }
 }

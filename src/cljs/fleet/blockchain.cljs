@@ -28,22 +28,29 @@
     (queries/set-active-account account)))
 
 (defn init []
-  (unlock-own-account)
-  (set-active-address)
+  (contracts/add-compiled-contract :mortal)
   (contracts/add-compiled-contract :greeter)
-  (contracts/add-compiled-contract :mortal))
+  (unlock-own-account)
+  (set-active-address))
 
-(defn deploy-compiled-code [abi bin]
-  (web3-eth/contract-new
-   web3-instance
-   (clj->js abi)
-   {:gas  constants/max-gas-limit
-    :data bin
-    :from (queries/fetch-active-account)}))
+(def tstc (atom {}))
 
 (defn deploy-contract [key]
-  (let [{:keys [abi bin]} (q/fetch-contract key)]
-    (println abi bin)))
+  (let [{:keys [abi bin]} (queries/fetch-contract key)]
+    (web3-eth/contract-new web3-instance
+                           abi bin
+                           {:gas  constants/max-gas-limit
+                            :data bin
+                            :from (queries/fetch-active-account)}
+                           (fn [err contract]
+                             (if-not err
+                               (let [address (aget contract "address")]
+                                 ;; Two calls: transaction received, and
+                                 ;; contract deployed
+                                 ;; Check address on the second call
+                                 (when address
+                                   (swap! tstc assoc :contract contract :address address)))
+                               (println "error deploying contract" err))))))
 
 ;; TODO:
 #_(add-compiled-contract :mortal)
