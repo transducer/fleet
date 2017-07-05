@@ -68,7 +68,7 @@
   (start-compile-solidity-auto)
   (message "Start local blockchain")
   (start-local-blockchain)
-  (sleep-for 5)
+  (sleep-for 10)
   (message "Attach local shell and check-work.js")
   (start-attach-shell))
 
