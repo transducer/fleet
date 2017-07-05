@@ -10,6 +10,7 @@
 
                  ;; HTTP
                  [cljs-ajax "0.5.8"]
+                 [org.clojure/core.async "0.3.443"]
 
                  ;; Frontend
                  [datascript "0.16.1"]

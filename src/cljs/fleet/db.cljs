@@ -1,7 +1,6 @@
 (ns fleet.db
   (:require [datascript.core :as d]
-            [reagent.core :as r]
-            #_[taoensso.timbre :refer-macros [debug info warn]]))
+            [reagent.core :as r]))
 
 (defonce schema
   { ;; refers to smart contracts

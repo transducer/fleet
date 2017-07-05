@@ -29,34 +29,24 @@
          :where [?e :blockchain/key ?key]]
        @contract-db contract-key))
 
-(defn add-contract
-  "Either updates existing contract with abi or bin, or add new entry..."
-
-  ;; TODO: cleaner to retrieve bin and abi in one go and have this function take
-  ;; bin and abi as params
-
-  [code-type contract-key data]
-  (let [{:keys [db/id]} (fetch-contract :greeter)
-        exists?         (boolean id)]
-    (if exists?
-      ;; FIXME: updating doe not work
-      (d/transact! conn [(if (= code-type :abi)
-                           {:db/id id :blockchain/abi data}
-                           {:db/id id :blockchain/bin data})])
+(defn upsert-contract
+  "Either updates existing contract with abi or bin, or adds new entry."
+  [contract-key abi bin]
+  (let [{:keys [db/id]} (fetch-contract :greeter)]
+    (if (some? id)
+      (d/transact! conn [[:db/add id :blockchain/abi abi]
+                         [:db/add id :blockchain/bin bin]])
       (d/transact! conn [{:db/id -1}
-                         (if (= code-type :abi)
-                           {:blockchain/contract -1
-                            :blockchain/key      contract-key
-                            :blockchain/abi      data}
-                           {:blockchain/contract -1
-                            :blockchain/key      contract-key
-                            :blockchain/bin      data})]))))
+                         {:blockchain/contract -1
+                          :blockchain/key      contract-key
+                          :blockchain/abi      abi
+                          :blockchain/bin      bin}]))))
 
 (defn set-active-account [address]
   ;; TODO: update previous
   (d/transact conn [{:blockchain/active-account address}]))
 
-(defn active-account []
+(defn fetch-active-account []
   (d/q '[:find ?name .
          :in $
          :where [_ :blockchain/active-account ?name]]
