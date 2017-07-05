@@ -24,10 +24,12 @@
       seq))
 
 (defn fetch-contract [contract-key]
-  (d/q '[:find (pull ?e [*]) .
-         :in $ ?key
-         :where [?e :blockchain/key ?key]]
-       @contract-db contract-key))
+  (let [query-result (d/q '[:find (pull ?e [*]) .
+                            :in $ ?key
+                            :where [?e :blockchain/key ?key]]
+                          @contract-db contract-key)
+        {:keys [blockchain/abi blockchain/bin]} query-result]
+    {:abi abi :bin bin}))
 
 (defn upsert-contract
   "Either updates existing contract with abi or bin, or adds new entry."

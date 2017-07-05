@@ -9,3 +9,6 @@
       (+ (* (get ascii-freqs true 0) 800)
          (* (get ascii-freqs false 0) 1550)))
     0))
+
+(defn format-bin [bin]
+  (str "0x" bin))

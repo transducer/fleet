@@ -1,72 +1,37 @@
 (ns fleet.blockchain
-  (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require [ajax.core :as ajax]
             [cljs-web3.core :as web3]
             [cljs-web3.eth :as web3-eth]
             [cljs-web3.personal :as web3-personal]
-            [cljs.core.async :as async]
             [cljsjs.web3]
             [fleet.blockchain.constants :as constants]
+            [fleet.blockchain.contracts :as contracts]
+            [fleet.blockchain.utils :as utils]
             [fleet.queries :as q]
             [goog.string :as string]
             [goog.string.format]))
 
 (enable-console-print!)
 
+(defn sha3 []
+  (web3/sha3 "2"))
+
 (def web3-instance
   (web3/create-web3 "http://localhost:8545/"))
-
-(defn fetch-contract [key]
-  (let [{:keys [blockchain/abi blockchain/bin]} (q/fetch-contract key)]
-    {:abi abi :bin bin}))
-
-(defn set-active-address []
-  (let [account (first (web3-eth/accounts web3-instance))]
-    (q/set-active-account account)))
 
 (defn unlock-own-account []
   (let [account (first (web3-eth/accounts web3-instance))]
     (web3-personal/unlock-account web3-instance account "password")))
 
-(defn sha3 []
-  (web3/sha3 "1"))
+(defn set-active-address []
+  (let [account (first (web3-eth/accounts web3-instance))]
+    (q/set-active-account account)))
 
-(defn fetch-contract-code [contract-key code-type]
-  (let [result-chan (async/chan)
-        handler     (fn [[ok data]]
-                      (if ok
-                        (go (async/>! result-chan {code-type data})
-                            (async/close! result-chan))
-                        (println "error fetching" contract-key)))
-        request     {:method          :get
-                     :uri             (string/format "./contracts/build/%s.%s"
-                                                     (name contract-key)
-                                                     (name code-type))
-                     :timeout         6000
-                     :response-format (if (= code-type :abi)
-                                        (ajax/json-response-format)
-                                        (ajax/text-response-format))
-                     :handler         handler}]
-    (ajax/ajax-request request)
-    result-chan))
-
-(defn format-bin [bin]
-  (str "0x" bin))
-
-(defn add-compiled-contract
-  "Retrieve :abi or :bin of smart contract with contract-key and store in db"
-  [contract-key]
-  (go (let [result-chans      (map (partial fetch-contract-code contract-key) [:abi :bin])
-            {:keys [abi bin]} (async/<!
-                               (go-loop [acc {} chans result-chans]
-                                 (let [c (first chans)]
-                                   (if c
-                                     (recur (merge acc (async/<! c))
-                                            (next chans))
-                                     acc))))]
-        (q/upsert-contract contract-key abi (format-bin bin)))))
-
-(add-compiled-contract :greeter)
+(defn init []
+  (unlock-own-account)
+  (set-active-address)
+  (contracts/add-compiled-contract :greeter)
+  (contracts/add-compiled-contract :mortal))
 
 (defn deploy-compiled-code [abi bin]
   (web3-eth/contract-new
@@ -77,9 +42,8 @@
     :from (q/fetch-active-account)}))
 
 (defn deploy-contract [key]
-  (let [{:keys [abi bin]} (fetch-contract key)]
-    (println abi bin)
-    ))
+  (let [{:keys [abi bin]} (q/fetch-contract key)]
+    (println abi bin)))
 
 ;; TODO:
 #_(add-compiled-contract :mortal)
