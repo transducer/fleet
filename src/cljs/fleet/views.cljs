@@ -1,6 +1,6 @@
 (ns fleet.views
   (:require [fleet.blockchain :as blockchain]
-            [fleet.queries :as q]
+            [fleet.queries :as queries]
             [fleet.util :refer [debug-panel]]
             [reagent.core :as r]
             [reagent.ratom :refer-macros [reaction]]))
@@ -73,7 +73,7 @@
         [slider weight 0 100]]
        [:br]
        [:button.button {:on-click
-                        #(do (q/add-party @address @weight)
+                        #(do (queries/add-party @address @weight)
                              (reset! address "")
                              (reset! weight 0))}
         "Add address"]])))
@@ -92,10 +92,10 @@
       [:tr
        [:td party-name]
        [:td weight]
-       [:td [:button.button {:on-click #(q/remove-party party-name)} "Remove"]]])]])
+       [:td [:button.button {:on-click #(queries/remove-party party-name)} "Remove"]]])]])
 
 (defn addresses []
-  (let [parties (reaction (q/get-parties))]
+  (let [parties (reaction (queries/get-parties))]
     (fn []
       [:div
        [:strong "Parties involved in the asset with their weight"]
@@ -104,7 +104,7 @@
          [:p "Add addresses of parties involved in the asset above"])])))
 
 (defn add-contract []
-  (let [parties (reaction (q/get-parties))]
+  (let [parties (reaction (queries/get-parties))]
     (fn []
       [:button.button {:on-click
                        ;; TODO, PUBLISH to BLOCKCHAIN

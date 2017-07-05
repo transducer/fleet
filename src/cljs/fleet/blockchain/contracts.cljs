@@ -4,7 +4,7 @@
   (:require [ajax.core :as ajax]
             [cljs.core.async :as async]
             [fleet.blockchain.utils :as utils]
-            [fleet.queries :as q]
+            [fleet.queries :as queries]
             [goog.string :as string]
             [goog.string.format]))
 
@@ -40,4 +40,4 @@
                                      (recur (merge acc (async/<! c))
                                             (next chans))
                                      acc))))]
-        (q/upsert-contract contract-key abi (utils/format-bin bin)))))
+        (queries/upsert-contract contract-key abi (utils/format-bin bin)))))

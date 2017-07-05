@@ -7,7 +7,7 @@
             [fleet.blockchain.constants :as constants]
             [fleet.blockchain.contracts :as contracts]
             [fleet.blockchain.utils :as utils]
-            [fleet.queries :as q]
+            [fleet.queries :as queries]
             [goog.string :as string]
             [goog.string.format]))
 
@@ -25,7 +25,7 @@
 
 (defn set-active-address []
   (let [account (first (web3-eth/accounts web3-instance))]
-    (q/set-active-account account)))
+    (queries/set-active-account account)))
 
 (defn init []
   (unlock-own-account)
@@ -39,7 +39,7 @@
    (clj->js abi)
    {:gas  constants/max-gas-limit
     :data bin
-    :from (q/fetch-active-account)}))
+    :from (queries/fetch-active-account)}))
 
 (defn deploy-contract [key]
   (let [{:keys [abi bin]} (q/fetch-contract key)]
@@ -49,7 +49,7 @@
 #_(add-compiled-contract :mortal)
 #_(deploy-contract :mortal)
 
-#_(q/fetch-active-account)
+#_(queries/fetch-active-account)
 
 #_(unlock-own-account)
 
