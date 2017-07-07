@@ -28,12 +28,10 @@
 ;; Contract code
 
 (defn fetch-contract [contract-key]
-  (let [query-result (d/q '[:find (pull ?e [*]) .
-                            :in $ ?key
-                            :where [?e :blockchain/key ?key]]
-                          @contract-db contract-key)
-        {:keys [blockchain/abi blockchain/bin]} query-result]
-    {:abi abi :bin bin}))
+  (d/q '[:find (pull ?e [*]) .
+         :in $ ?key
+         :where [?e :blockchain/key ?key]]
+       @contract-db contract-key))
 
 (defn upsert-contract
   "Either updates existing contract with abi or bin, or adds new entry."
@@ -50,7 +48,7 @@
 
 (defn set-active-account [address]
   ;; TODO: update previous
-  (d/transact conn [{:blockchain/active-account address}]))
+  (d/transact! conn [{:blockchain/active-account address}]))
 
 (defn fetch-active-account []
   (d/q '[:find ?name .
@@ -63,18 +61,19 @@
 (defn add-instance
   "Adds contract instance"
   [contract-key contract-instance]
-  (log/error "ADD INSTANCE" contract-key contract-instance)
+  (println "Adding contract instance for" contract-key)
   (let [{:keys [db/id]} (fetch-contract contract-key)]
-    (log/error "ID" id)
-    (d/transact conn [[:db/add id :blockchain/instance contract-instance]])))
+    (d/transact! conn [[:db/add id :blockchain/instance contract-instance]])))
 
 (defn add-address
   "Adds contract address"
   [contract-key address]
+  (println "Adding contract address for" contract-key)
   (let [{:keys [db/id]} (fetch-contract contract-key)]
-    (d/transact conn [[:db/add id :blockchain/address address]])))
+    (d/transact! conn [[:db/add id :blockchain/address address]])))
 
-(defn get-instance [contract-key]
+(defn fetch-instance [contract-key]
+  (println "getting instance for" contract-key)
   (d/q '[:find ?instance .
          :in $ ?key
          :where [?e :blockchain/key ?key]
