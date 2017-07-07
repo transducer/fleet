@@ -96,8 +96,8 @@
      [:th ""]]]
    [:tbody
     (for [{address :beneficiary/address
-           weight :beneficiary/weight
-           :as beneficiary} beneficiaries]
+           weight  :beneficiary/weight
+           :as     beneficiary} beneficiaries]
       ^{:key beneficiary}
       [:tr
        [:td address]
@@ -115,8 +115,7 @@
                  weight"]
        (if-some [beneficiaries @beneficiaries]
          [beneficiary-table beneficiaries]
-         [:p "Add addresses of parties involved in the asset
-              above"])])))
+         [:p "First add addresses of beneficiaries involved"])])))
 
 (defn add-smart-asset []
   (let [asset-name    (r/atom "")

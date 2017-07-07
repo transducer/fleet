@@ -2,12 +2,13 @@ pragma solidity ^0.4.10;
 
 
 contract Greeter {
-  string greeting;
 
   function greet() constant returns (string) {
     return "Hello from the Greeter smart contract";
   }
+
 }
+
 
 contract Owned {
 
@@ -36,7 +37,7 @@ contract SimpleSmartAsset is Mortal {
   address owner;
   uint usagePrice;
   Beneficiary[] beneficiaries;
-  uint totalWeight; // to calculate percentage the beneficiary receive
+  uint totalWeight; // to calculate percentage the beneficiaries receive
 
   // Constructor
   function SimpleSmartAsset(uint _usagePrice,
@@ -110,9 +111,6 @@ contract SimpleSmartAssetManager is Mortal, Greeter {
     owner = msg.sender;
   }
 
-  // Create smart asset and fund it.
-  // When this function is called without Ether the Smart Asset cannot be
-  // beneficiaries.
   function createSmartAsset (string name,
                              uint usagePrice,
                              address[] addresses,
@@ -121,7 +119,9 @@ contract SimpleSmartAssetManager is Mortal, Greeter {
     require(addresses.length == weights.length);
     require(simpleSmartAssets[name] == address(0x0));
 
-    address assetAddress = new SimpleSmartAsset(usagePrice, addresses, weights);
+    address assetAddress = new SimpleSmartAsset(usagePrice,
+                                                addresses,
+                                                weights);
   }
 
   function selfdestructSmartAsset(address addr) onlyOwner {
@@ -133,7 +133,6 @@ contract SimpleSmartAssetManager is Mortal, Greeter {
     assetAddress.transfer(msg.value);
     SimpleSmartAsset(assetAddress).pay();
   }
-
 
   event AssetInfo (
     string name,
