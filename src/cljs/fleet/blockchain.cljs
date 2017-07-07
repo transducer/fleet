@@ -29,13 +29,12 @@
     (queries/set-active-account account)))
 
 (defn init []
-  (contracts/add-compiled-contract :mortal)
-  (contracts/add-compiled-contract :greeter)
+  (contracts/add-compiled-contract :simplesmartassetmanager)
   (unlock-own-account)
   (set-active-address))
 
 (defn deploy-contract [key]
-  (let [{:keys [abi bin]} (queries/fetch-contract key)]
+  (let [{:keys [:blockchain/abi :blockchain/bin]} (queries/fetch-contract key)]
     (web3-eth/contract-new web3-instance
                            abi
                            {:gas  constants/max-gas-limit
@@ -52,6 +51,9 @@
                                    (queries/add-address key address)))
                                (println "error deploying contract" err))))))
 
+;; (init)
+;; (deploy-contract :simplesmartassetmanager)
+;; (web3-eth/contract-call (queries/fetch-instance :simplesmartassetmanager) :say-hello {:from (queries/fetch-active-account)})
 #_(def my-contract (cljs-web3.eth/contract-at web3-instance (:abi (fleet.queries/fetch-contract :greeter)) (:address @test-contract)))
 #_(cljs-web3.eth/contract-call my-contract :greet)
 
