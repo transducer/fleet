@@ -93,8 +93,8 @@
      [:th ""]]]
    [:tbody
     (for [{address :beneficiary/address
-           weight :beneficiary/weight
-           :as beneficiary} beneficiaries]
+           weight  :beneficiary/weight
+           :as     beneficiary} beneficiaries]
       ^{:key beneficiary}
       [:tr
        [:td address]

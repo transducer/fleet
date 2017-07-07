@@ -29,7 +29,7 @@
     (queries/set-active-account account)))
 
 (defn deploy-contract [key]
-  (let [{:keys [:blockchain/abi :blockchain/bin]} (queries/fetch-contract key)
+  (let [{:keys [:contract/abi :contract/bin]} (queries/fetch-contract key)
 
         data {:gas  constants/max-gas-limit
               :data bin

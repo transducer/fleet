@@ -30,7 +30,7 @@
 (defn fetch-contract [contract-key]
   (d/q '[:find (pull ?e [*]) .
          :in $ ?key
-         :where [?e :blockchain/key ?key]]
+         :where [?e :contract/key ?key]]
        @contract-db contract-key))
 
 (defn upsert-contract
@@ -38,13 +38,13 @@
   [contract-key abi bin]
   (let [{:keys [db/id]} (fetch-contract :greeter)]
     (if (some? id)
-      (d/transact! conn [[:db/add id :blockchain/abi abi]
-                         [:db/add id :blockchain/bin bin]])
+      (d/transact! conn [[:db/add id :contract/abi abi]
+                         [:db/add id :contract/bin bin]])
       (d/transact! conn [{:db/id -1}
-                         {:blockchain/contract -1
-                          :blockchain/key      contract-key
-                          :blockchain/abi      abi
-                          :blockchain/bin      bin}]))))
+                         {:contract/contract -1
+                          :contract/key      contract-key
+                          :contract/abi      abi
+                          :contract/bin      bin}]))))
 
 (defn set-active-account [address]
   ;; TODO: update previous
@@ -63,21 +63,21 @@
   [contract-key contract-instance]
   (println "Adding contract instance for" contract-key)
   (let [{:keys [db/id]} (fetch-contract contract-key)]
-    (d/transact! conn [[:db/add id :blockchain/instance contract-instance]])))
+    (d/transact! conn [[:db/add id :contract/instance contract-instance]])))
 
 (defn add-address
   "Adds contract address"
   [contract-key address]
   (println "Adding contract address for" contract-key)
   (let [{:keys [db/id]} (fetch-contract contract-key)]
-    (d/transact! conn [[:db/add id :blockchain/address address]])))
+    (d/transact! conn [[:db/add id :contract/address address]])))
 
 (defn fetch-instance [contract-key]
   (println "getting instance for" contract-key)
   (let [instance (or (d/q '[:find ?instance .
                             :in $ ?key
-                            :where [?e :blockchain/key ?key]
-                            [?e :blockchain/instance ?instance]]
+                            :where [?e :contract/key ?key]
+                                   [?e :contract/instance ?instance]]
                           @contract-db contract-key))]
     (or instance
         (throw (ex-info "No instance of smart contract in database"

@@ -9,9 +9,9 @@
    :beneficiary/address     {:db/cardinality :db.cardinality/one}
 
    ;; refers to smart contracts
-   :blockchain/contract {:db/type :db.type/ref}
-   :blockchain/key      {:db/cardinality :db.cardinality/one}
-   :blockchain/abi      {:db/cardinality :db.cardinality/one}})
+   :contract/contract {:db/type :db.type/ref}
+   :contract/key      {:db/cardinality :db.cardinality/one}
+   :contract/abi      {:db/cardinality :db.cardinality/one}})
 
 (defonce conn
   (d/create-conn schema))
