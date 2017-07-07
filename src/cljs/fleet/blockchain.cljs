@@ -28,28 +28,34 @@
   (let [account (first (web3-eth/accounts web3-instance))]
     (queries/set-active-account account)))
 
+(defn deploy-contract [key]
+  (let [{:keys [:blockchain/abi :blockchain/bin]} (queries/fetch-contract key)
+
+        data {:gas  constants/max-gas-limit
+              :data bin
+              :from (queries/fetch-active-account)}
+
+        handler (fn [err contract]
+                  (if-not err
+                    (let [address (aget contract "address")]
+                      ;; Two calls: transaction received, and
+                      ;; contract deployed
+                      ;; Check address on the second call
+                      (when (web3/address? address)
+                        (queries/add-instance key contract)
+                        (queries/add-address key address)))
+                    (println "error deploying contract" err)))]
+    (web3-eth/contract-new web3-instance
+                           abi
+                           data
+                           handler)))
+
 (defn init []
   (contracts/add-compiled-contract :simplesmartassetmanager)
   (unlock-own-account)
-  (set-active-address))
-
-(defn deploy-contract [key]
-  (let [{:keys [:blockchain/abi :blockchain/bin]} (queries/fetch-contract key)]
-    (web3-eth/contract-new web3-instance
-                           abi
-                           {:gas  constants/max-gas-limit
-                            :data bin
-                            :from (queries/fetch-active-account)}
-                           (fn [err contract]
-                             (if-not err
-                               (let [address (aget contract "address")]
-                                 ;; Two calls: transaction received, and
-                                 ;; contract deployed
-                                 ;; Check address on the second call
-                                 (when (web3/address? address)
-                                   (queries/add-instance key contract)
-                                   (queries/add-address key address)))
-                               (println "error deploying contract" err))))))
+  (set-active-address)
+  (js/setTimeout (fn [] (deploy-contract :simplesmartassetmanager))
+                 3000))
 
 ;; (init)
 ;; (deploy-contract :simplesmartassetmanager)
