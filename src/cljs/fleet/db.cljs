@@ -3,15 +3,15 @@
             [reagent.core :as r]))
 
 (defonce schema
-  { ;; refers to smart contracts
-   :blockchain/contract {:db/type :db.type/ref}
-   :blockchain/key      {:db/cardinality :db.cardinality/one}
-   :blockchain/abi      {:db/cardinality :db.cardinality/one}
-
-   ;; contracts made on the front-end
+  {;; contracts made on the front-end
    :contract/party  {:db/type :db.type/ref}
    :contract/weight {:db/cardinality :db.cardinality/one}
-   :contract/name   {:db/cardinality :db.cardinality/one}})
+   :contract/name   {:db/cardinality :db.cardinality/one}
+
+   ;; refers to smart contracts
+   :blockchain/contract {:db/type :db.type/ref}
+   :blockchain/key      {:db/cardinality :db.cardinality/one}
+   :blockchain/abi      {:db/cardinality :db.cardinality/one}})
 
 (defonce conn
   (d/create-conn schema))
