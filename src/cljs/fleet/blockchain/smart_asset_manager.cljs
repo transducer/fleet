@@ -11,19 +11,19 @@
   (let [instance (queries/fetch-instance contract-key)]
     (web3-eth/contract-call instance :greet)))
 
-(defn addresses-and-weights [parties]
+(defn addresses-and-weights [beneficiaries]
   (let [transpose (partial apply mapv vector)]
-    (->> parties
-         (map (juxt :contract/address
-                    :contract/weight))
+    (->> beneficiaries
+         (map (juxt :beneficiary/address
+                    :beneficiary/weight))
          transpose)))
 
-(defn create-smart-asset [name usage-price parties]
+(defn create-smart-asset [name usage-price beneficiaries]
   (let [account             (queries/fetch-active-account)
         instance            (queries/fetch-instance contract-key)
         data                {:from  account
                              :gas   constants/max-gas-limit}
-        [addresses weights] (addresses-and-weights parties)]
+        [addresses weights] (addresses-and-weights beneficiaries)]
     (println name usage-price addresses weights data)
     (web3-eth/contract-call instance
                             :create-smart-asset

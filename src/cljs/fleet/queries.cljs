@@ -4,24 +4,24 @@
 
 ;; Frontend
 
-(defn add-party [address weight]
+(defn add-beneficiary [address weight]
   (d/transact! conn [{:db/id -1}
-                     {:contract/party   -1
-                      :contract/address address
-                      :contract/weight  weight}]))
+                     {:beneficiary/beneficiary -1
+                      :beneficiary/address     address
+                      :beneficiary/weight      weight}]))
 
 (defn get-by-address [address]
   (d/q '[:find ?e .
          :in $ ?address
-         :where [?e :contract/address ?address]]
+         :where [?e :beneficiary/address ?address]]
        @contract-db address))
 
-(defn remove-party [address]
+(defn remove-beneficiary [address]
   (d/transact! conn [[:db.fn/retractEntity (get-by-address address)]]))
 
-(defn get-parties []
+(defn get-beneficiaries []
   (-> (d/q '[:find [(pull ?e [*]) ...]
-             :where [?e :contract/party _]]
+             :where [?e :beneficiary/beneficiary _]]
            @contract-db)
       seq))
 

@@ -4,9 +4,9 @@
 
 (defonce schema
   {;; contracts made on the front-end
-   :contract/party  {:db/type :db.type/ref}
-   :contract/weight {:db/cardinality :db.cardinality/one}
-   :contract/name   {:db/cardinality :db.cardinality/one}
+   :beneficiary/beneficiary {:db/type :db.type/ref}
+   :beneficiary/weight      {:db/cardinality :db.cardinality/one}
+   :beneficiary/address     {:db/cardinality :db.cardinality/one}
 
    ;; refers to smart contracts
    :blockchain/contract {:db/type :db.type/ref}

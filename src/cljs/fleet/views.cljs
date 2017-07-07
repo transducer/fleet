@@ -51,8 +51,9 @@
  below. Use the slider to set the relative weight of the usage price the
  beneficiary receives on usage of the asset. Then deploy the smart asset
  contract to the Ethereum blockchain. When the asset is used, the price for
- usage will be deducted from the consumer, and the added parties involved will
- be paid the relative weight."]))
+ usage will be deducted from the consumer, and the added beneficiaries involved
+ will be paid the relative weight (their weight as percentage of total
+ weight)."]))
 
 (defn slider [value min max]
   (fn []
@@ -60,7 +61,7 @@
              :on-change (fn [e]
                           (reset! value (.-target.value e)))}]))
 
-(defn add-address []
+(defn add-beneficiary []
   (let [address (r/atom "")
         weight  (r/atom 0)]
     (fn []
@@ -70,18 +71,20 @@
        [:span
         [:input {:type      "text"
                  :value     @address
-                 :on-change #(reset! address (-> % .-target .-value))}]
+                 :on-change #(reset! address
+                                     (-> % .-target .-value))}]
         "weight: "
         [slider weight 0 100]]
        [:br]
        [:button.button {:on-click
-                        #(do (queries/add-party @address @weight)
+                        #(do (queries/add-beneficiary @address
+                                                      @weight)
                              (reset! address "")
                              (reset! weight 0))}
-        "Add address"]])))
+        "Add beneficiary"]])))
 
-(defn party-table
-  [parties]
+(defn beneficiary-table
+  [beneficiaries]
   [:table
    [:thead
     [:tr
@@ -89,32 +92,40 @@
      [:th "Weight"]
      [:th ""]]]
    [:tbody
-    (for [{address :contract/address weight :contract/weight :as party} parties]
-      ^{:key party}
+    (for [{address :beneficiary/address
+           weight :beneficiary/weight
+           :as beneficiary} beneficiaries]
+      ^{:key beneficiary}
       [:tr
        [:td address]
        [:td weight]
-       [:td [:button.button {:on-click #(queries/remove-party address)} "Remove"]]])]])
+       [:td [:button.button
+             {:on-click
+              #(queries/remove-beneficiary address)}
+             "Remove"]]])]])
 
-(defn addresses []
-  (let [parties (reaction (queries/get-parties))]
+(defn beneficiaries []
+  (let [beneficiaries (reaction (queries/get-beneficiaries))]
     (fn []
       [:div
-       [:strong "Parties involved in the asset with their weight"]
-       (if-some [parties @parties]
-         [party-table parties]
-         [:p "Add addresses of parties involved in the asset above"])])))
+       [:strong "Beneficiaries involved in the asset with their
+                 weight"]
+       (if-some [beneficiaries @beneficiaries]
+         [beneficiary-table beneficiaries]
+         [:p "Add addresses of parties involved in the asset
+              above"])])))
 
-(defn add-contract []
-  (let [asset-name  (r/atom "")
-        usage-price (r/atom 100)
-        parties     (reaction (queries/get-parties))]
+(defn add-smart-asset []
+  (let [asset-name    (r/atom "")
+        usage-price   (r/atom 100)
+        beneficiaries (reaction (queries/get-beneficiaries))]
     (fn []
       [:div
        [:span "Name of asset: "
         [:input {:type      "text"
                  :value     @asset-name
-                 :on-change #(reset! asset-name (-> % .-target .-value))}]]
+                 :on-change #(reset! asset-name
+                                     (-> % .-target .-value))}]]
        [:br]
        [:span "Usage price of asset (ETH): "
         [:input {:type      "number"
@@ -126,7 +137,7 @@
                         #(println (asset-manager/create-smart-asset
                                    @asset-name
                                    @usage-price
-                                   @parties))}
+                                   @beneficiaries))}
         "Publish on the blockchain"]])))
 
 (defn main-panel []
@@ -140,9 +151,9 @@
       [:div#custom-page
        [page-header]
        [explanation]
-       [add-address]
+       [add-beneficiary]
        [:br]
-       [addresses]
+       [beneficiaries]
        [:br]
-       [add-contract]
+       [add-smart-asset]
        [footer]]]]))
