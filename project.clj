@@ -28,10 +28,10 @@
 
   :figwheel {:css-dirs ["resources/public/css"]}
 
-  :auto {"compile-solidity" {:file-pattern #"\.(sol)$"
-                             :paths        ["resources/public/contracts/src"]}}
+  :auto {"compile-contracts" {:file-pattern #"\.(sol)$"
+                              :paths        ["resources/public/contracts/src"]}}
 
-  :aliases {"compile-solidity"       ["shell" "./compile-solidity.sh"]
+  :aliases {"compile-contracts"      ["shell" "./compile-contracts.sh"]
             "start-local-blockchain" ["shell" "./start-local-blockchain.sh"]}
 
   :profiles

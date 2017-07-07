@@ -27,7 +27,7 @@ Use `M-x fleet-jack-in` to start
 
 #### Auto-compile solidity Smart Contracts
 
-    lein auto compile-solidity
+    lein auto compile-contracts
 
 #### Start Ethereum blockchain
 

@@ -18,10 +18,10 @@
   "/please/set/fleet-root"
   "The root directory of the Fleet repo.")
 
-(defun start-compile-solidity-auto ()
-  (start-process-shell-command "compile-solidity"
-                               "compile-solidity"
-                               (concat "cd " fleet-root " && lein auto compile-solidity")))
+(defun start-compile-contracts-auto ()
+  (start-process-shell-command "compile-contracts"
+                               "compile-contracts"
+                               (concat "cd " fleet-root " && lein auto compile-contracts")))
 (defun start-local-blockchain ()
   (start-process-shell-command "local-blockchain"
                                "local-blockchain"
@@ -30,9 +30,9 @@
 (defun start-attach-shell ()
   (ansi-term (concat fleet-root "/attach-shell.sh") "geth-shell"))
 
-(defun stop-compile-solidity-auto ()
-  (message "Stop compiling Solidity Smart Contracts")
-  (when-let ((buf (get-buffer "compile-solidity")))
+(defun stop-compile-contracts-auto ()
+  (message "Stop compiling Smart Contracts")
+  (when-let ((buf (get-buffer "compile-contracts")))
     (kill-buffer buf)))
 
 (defun stop-local-blockchain ()
@@ -64,8 +64,8 @@
 
 (defun fleet-start ()
   (interactive)
-  (message "Auto compile Solidity Smart Contracts")
-  (start-compile-solidity-auto)
+  (message "Auto compile Smart Contracts")
+  (start-compile-contracts-auto)
   (message "Start local blockchain")
   (start-local-blockchain)
   (sleep-for 10)
@@ -74,7 +74,7 @@
 
 (defun fleet-stop ()
   (interactive)
-  (stop-compile-solidity-auto)
+  (stop-compile-contracts-auto)
   (stop-local-blockchain)
   (stop-attached-shell))
 
@@ -83,7 +83,7 @@
 
 (defun fleet-quit ()
   (interactive)
-  (stop-compile-solidity-auto)
+  (stop-compile-contracts-auto)
   (stop-local-blockchain)
   (stop-attached-shell)
   (when-let ((repl-buffer (fleet-project-repl)))
