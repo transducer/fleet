@@ -1,4 +1,4 @@
-(ns fleet.blockchain.contracts
+(ns fleet.blockchain.files
   "Interaction with local smart contract files."
   (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require [ajax.core :as ajax]

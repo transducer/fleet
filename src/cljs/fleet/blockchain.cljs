@@ -5,7 +5,7 @@
             [cljs-web3.personal :as web3-personal]
             [cljsjs.web3]
             [fleet.blockchain.constants :as constants]
-            [fleet.blockchain.contracts :as contracts]
+            [fleet.blockchain.files :as files]
             [fleet.blockchain.utils :as utils]
             [fleet.queries :as queries]
             [goog.string :as string]
@@ -51,7 +51,7 @@
                            handler)))
 
 (defn init []
-  (contracts/add-compiled-contract :simplesmartassetmanager)
+  (files/add-compiled-contract :simplesmartassetmanager)
   (unlock-own-account)
   (set-active-address)
   (js/setTimeout (fn [] (deploy-contract :simplesmartassetmanager))
