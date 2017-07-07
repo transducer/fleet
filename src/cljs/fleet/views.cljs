@@ -1,5 +1,6 @@
 (ns fleet.views
   (:require [fleet.blockchain :as blockchain]
+            [fleet.blockchain.smart-asset-manager :as asset-manager]
             [fleet.queries :as queries]
             [fleet.util :refer [debug-panel]]
             [reagent.core :as r]
@@ -46,11 +47,12 @@
 
 (defn explanation []
   (fn []
-    [:div "Add the parties involved in the contract below. Use the slider to set
- the percentage of the usage price the party received on usage of the asset.
- Then deploy the contract to the Ethereum blockchain. When the asset is used,
- the price for usage will be deducted from the consumer, and the added parties
- involved will be paid the relative weight."]))
+    [:div "Add the addresses of the beneficiaries involved in the smart asset
+ below. Use the slider to set the relative weight of the usage price the
+ beneficiary receives on usage of the asset. Then deploy the smart asset
+ contract to the Ethereum blockchain. When the asset is used, the price for
+ usage will be deducted from the consumer, and the added parties involved will
+ be paid the relative weight."]))
 
 (defn slider [value min max]
   (fn []
@@ -104,14 +106,28 @@
          [:p "Add addresses of parties involved in the asset above"])])))
 
 (defn add-contract []
-  (let [name    (r/atom "")
-        parties (reaction (queries/get-parties))]
+  (let [asset-name  (r/atom "")
+        usage-price (r/atom 100)
+        parties     (reaction (queries/get-parties))]
     (fn []
-      [:button.button {:on-click
-                       ;; TODO, PUBLISH to BLOCKCHAIN
-                       #(do (println @parties)
-                            (println (blockchain/unlock-own-account)))}
-       "Publish on the blockchain"])))
+      [:div
+       [:span "Name of asset: "
+        [:input {:type      "text"
+                 :value     @asset-name
+                 :on-change #(reset! asset-name (-> % .-target .-value))}]]
+       [:br]
+       [:span "Usage price of asset (ETH): "
+        [:input {:type      "number"
+                 :value     @usage-price
+                 :on-change #(reset! usage-price
+                                     (js/parseInt
+                                      (-> % .-target .-value)))}]]
+       [:button.button {:on-click
+                        #(println (asset-manager/create-smart-asset
+                                   @asset-name
+                                   @usage-price
+                                   @parties))}
+        "Publish on the blockchain"]])))
 
 (defn main-panel []
   (fn []

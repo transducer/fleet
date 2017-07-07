@@ -55,6 +55,10 @@ contract SimpleSmartAsset is Mortal {
     }
   }
 
+  function getUsagePrice() constant returns (uint) {
+    return usagePrice;
+  }
+
   // Dapp can listen to events
   event BeneficiariesPaid;
 
@@ -112,7 +116,7 @@ contract SimpleSmartAssetManager is Mortal, Greeter {
   function createSmartAsset (string name,
                              uint usagePrice,
                              address[] addresses,
-                             uint[] weights) payable {
+                             uint[] weights) {
 
     require(addresses.length == weights.length);
     require(simpleSmartAssets[name] == address(0x0));
@@ -128,6 +132,20 @@ contract SimpleSmartAssetManager is Mortal, Greeter {
     address assetAddress = simpleSmartAssets[name];
     assetAddress.transfer(msg.value);
     SimpleSmartAsset(assetAddress).pay();
+  }
+
+
+  event AssetInfo (
+    string name,
+    address addr, // for debugging
+    uint price
+  );
+
+  function getUsagePrice(string name) {
+    address addr = simpleSmartAssets[name];
+    uint usagePrice = SimpleSmartAsset(addr).getUsagePrice();
+
+    AssetInfo(name, addr, usagePrice); // FIXME, how to see this?
   }
 
   function remove() onlyOwner {
