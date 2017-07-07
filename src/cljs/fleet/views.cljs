@@ -83,16 +83,16 @@
   [:table
    [:thead
     [:tr
-     [:th "Name"]
+     [:th "Address"]
      [:th "Weight"]
      [:th ""]]]
    [:tbody
-    (for [{party-name :contract/name weight :contract/weight :as party} parties]
+    (for [{address :contract/address weight :contract/weight :as party} parties]
       ^{:key party}
       [:tr
-       [:td party-name]
+       [:td address]
        [:td weight]
-       [:td [:button.button {:on-click #(queries/remove-party party-name)} "Remove"]]])]])
+       [:td [:button.button {:on-click #(queries/remove-party address)} "Remove"]]])]])
 
 (defn addresses []
   (let [parties (reaction (queries/get-parties))]
@@ -104,7 +104,8 @@
          [:p "Add addresses of parties involved in the asset above"])])))
 
 (defn add-contract []
-  (let [parties (reaction (queries/get-parties))]
+  (let [name    (r/atom "")
+        parties (reaction (queries/get-parties))]
     (fn []
       [:button.button {:on-click
                        ;; TODO, PUBLISH to BLOCKCHAIN

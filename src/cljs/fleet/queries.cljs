@@ -4,20 +4,20 @@
 
 ;; Frontend
 
-(defn add-party [party-name weight]
+(defn add-party [address weight]
   (d/transact! conn [{:db/id -1}
-                     {:contract/party  -1
-                      :contract/name   party-name
-                      :contract/weight weight}]))
+                     {:contract/party   -1
+                      :contract/address address
+                      :contract/weight  weight}]))
 
-(defn get-by-name [party-name]
+(defn get-by-address [address]
   (d/q '[:find ?e .
-         :in $ ?party-name
-         :where [?e :contract/name ?party-name]]
-       @contract-db party-name))
+         :in $ ?address
+         :where [?e :contract/address ?address]]
+       @contract-db address))
 
-(defn remove-party [party-name]
-  (d/transact! conn [[:db.fn/retractEntity (get-by-name party-name)]]))
+(defn remove-party [address]
+  (d/transact! conn [[:db.fn/retractEntity (get-by-address address)]]))
 
 (defn get-parties []
   (-> (d/q '[:find [(pull ?e [*]) ...]
