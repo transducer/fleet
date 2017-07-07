@@ -47,7 +47,7 @@
                                  ;; Two calls: transaction received, and
                                  ;; contract deployed
                                  ;; Check address on the second call
-                                 (when address
+                                 (when (web3/address? address)
                                    (queries/add-instance key contract)
                                    (queries/add-address key address)))
                                (println "error deploying contract" err))))))
