@@ -1,6 +1,13 @@
 pragma solidity ^0.4.10;
 
 
+contract Greeter {
+  function sayHello(string something) constant returns (string) {
+    return "Hello";
+  }
+}
+
+
 contract Owned {
 
   address owner;
@@ -54,7 +61,7 @@ contract SimpleSmartAsset is Mortal {
 }
 
 
-contract SimpleSmartAssetManager is Mortal {
+contract SimpleSmartAssetManager is Mortal, Greeter {
 
   address owner;
 
