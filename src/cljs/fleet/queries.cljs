@@ -2,6 +2,8 @@
   (:require [datascript.core :as d]
             [fleet.db :refer [conn contract-db]]))
 
+;; Frontend
+
 (defn add-party [party-name weight]
   (d/transact! conn [{:db/id -1}
                      {:contract/party  -1
@@ -22,6 +24,8 @@
              :where [?e :contract/party _]]
            @contract-db)
       seq))
+
+;; Contract code
 
 (defn fetch-contract [contract-key]
   (let [query-result (d/q '[:find (pull ?e [*]) .
@@ -53,3 +57,26 @@
          :in $
          :where [_ :blockchain/active-account ?name]]
        @contract-db))
+
+;; Blockchained contracts
+
+(defn add-instance
+  "Adds contract instance"
+  [contract-key contract-instance]
+  (log/error "ADD INSTANCE" contract-key contract-instance)
+  (let [{:keys [db/id]} (fetch-contract contract-key)]
+    (log/error "ID" id)
+    (d/transact conn [[:db/add id :blockchain/instance contract-instance]])))
+
+(defn add-address
+  "Adds contract address"
+  [contract-key address]
+  (let [{:keys [db/id]} (fetch-contract contract-key)]
+    (d/transact conn [[:db/add id :blockchain/address address]])))
+
+(defn get-instance [contract-key]
+  (d/q '[:find ?instance .
+         :in $ ?key
+         :where [?e :blockchain/key ?key]
+                [?e :blockchain/instance ?instance]]
+       @contract-db contract-key))

@@ -8,6 +8,9 @@
             [goog.string :as string]
             [goog.string.format]))
 
+;; Review:
+;; "I wondered why you were using diminutive suffixes until I realized you were
+;; not using Keigo"
 (defn- fetch-contract-code
   "Retrieves code of :bin or :abi."
   [contract-key code-type]
@@ -30,11 +33,11 @@
     result-chan))
 
 (defn add-compiled-contract
-  "Retrieve :abi or :bin of smart contract with contract-key and store in db"
+  "Retrieve :abi and :bin of smart contract with contract-key and store in db"
   [contract-key]
   (go (let [result-chans      (map (partial fetch-contract-code contract-key) [:abi :bin])
             {:keys [abi bin]} (async/<!
-                               (go-loop [acc {} chans result-chans]
+                               (go-loop [acc {}, chans result-chans]
                                  (let [c (first chans)]
                                    (if c
                                      (recur (merge acc (async/<! c))

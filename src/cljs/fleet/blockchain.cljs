@@ -17,6 +17,7 @@
   (web3/sha3 "2"))
 
 (def web3-instance
+  #_(js/web3) ;; FIXME
   (web3/create-web3 "http://localhost:8545/"))
 
 (defn unlock-own-account []
@@ -33,12 +34,10 @@
   (unlock-own-account)
   (set-active-address))
 
-(def tstc (atom {}))
-
 (defn deploy-contract [key]
   (let [{:keys [abi bin]} (queries/fetch-contract key)]
     (web3-eth/contract-new web3-instance
-                           abi bin
+                           abi
                            {:gas  constants/max-gas-limit
                             :data bin
                             :from (queries/fetch-active-account)}
@@ -49,8 +48,14 @@
                                  ;; contract deployed
                                  ;; Check address on the second call
                                  (when address
-                                   (swap! tstc assoc :contract contract :address address)))
+                                   (queries/add-instance key contract)
+                                   (queries/add-address key address)))
                                (println "error deploying contract" err))))))
+
+#_(def my-contract (cljs-web3.eth/contract-at web3-instance (:abi (fleet.queries/fetch-contract :greeter)) (:address @test-contract)))
+#_(cljs-web3.eth/contract-call my-contract :greet)
+
+#_(cljs-web3.eth/contract-call web3-instance (fleet.queries/get-contract :greeter) :greet)
 
 ;; TODO:
 #_(add-compiled-contract :mortal)
