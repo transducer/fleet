@@ -17,9 +17,12 @@
 (defn menu-panel []
   (fn []
     [:div#menucont.bodycontainer.clearfix
-     [:div.menutitle [:p [:span.fa.fa-reorder] [:strong "Menu"]]]
+     [:div.menutitle [:p
+                      [:span.fa.fa-reorder]
+                      [:strong "Menu"]]]
      [:ul.menu
-      [:li.active [:a.active {:href "/" :title "Contracts"} "Contracts"]]]]))
+      [:li.active [:a.active {:href "/" :title "Smart assets"}
+                   "Smart assets"]]]]))
 
 (defn social-media []
   (fn []
@@ -66,7 +69,7 @@
         weight  (r/atom 0)]
     (fn []
       [:div
-       [:h2 "Create new contract"]
+       [:h2 "Create new smart asset"]
        "address: "
        [:span
         [:input {:type      "text"
@@ -93,8 +96,8 @@
      [:th ""]]]
    [:tbody
     (for [{address :beneficiary/address
-           weight  :beneficiary/weight
-           :as     beneficiary} beneficiaries]
+           weight :beneficiary/weight
+           :as beneficiary} beneficiaries]
       ^{:key beneficiary}
       [:tr
        [:td address]
@@ -127,7 +130,7 @@
                  :on-change #(reset! asset-name
                                      (-> % .-target .-value))}]]
        [:br]
-       [:span "Usage price of asset (ETH): "
+       [:span "Usage price of asset (in ETH): "
         [:input {:type      "number"
                  :value     @usage-price
                  :on-change #(reset! usage-price
