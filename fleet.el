@@ -22,6 +22,7 @@
   (start-process-shell-command "compile-contracts"
                                "compile-contracts"
                                (concat "cd " fleet-root " && lein auto compile-contracts")))
+
 (defun start-local-blockchain ()
   (start-process-shell-command "local-blockchain"
                                "local-blockchain"
