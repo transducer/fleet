@@ -2,11 +2,12 @@ pragma solidity ^0.4.10;
 
 
 contract Greeter {
-  function sayHello(string something) constant returns (string) {
-    return "Hello";
+  string greeting;
+
+  function greet() constant returns (string) {
+    return "Hello from the Greeter smart contract";
   }
 }
-
 
 contract Owned {
 

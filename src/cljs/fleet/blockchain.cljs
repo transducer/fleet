@@ -59,9 +59,7 @@
 
 ;; (init)
 ;; (deploy-contract :simplesmartassetmanager)
-;; (web3-eth/contract-call (queries/fetch-instance :simplesmartassetmanager) :say-hello {:from (queries/fetch-active-account)})
-#_(def my-contract (cljs-web3.eth/contract-at web3-instance (:abi (fleet.queries/fetch-contract :greeter)) (:address @test-contract)))
-#_(cljs-web3.eth/contract-call my-contract :greet)
+;; (web3-eth/contract-call (queries/fetch-instance :simplesmartassetmanager) :set-greeting "Hello from the Greeter smart contract" {:from (queries/fetch-active-account)})
 
 #_(cljs-web3.eth/contract-call web3-instance (fleet.queries/get-contract :greeter) :greet)
 
