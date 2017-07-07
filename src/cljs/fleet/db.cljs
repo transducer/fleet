@@ -3,15 +3,20 @@
             [reagent.core :as r]))
 
 (defonce schema
-  {;; contracts made on the front-end
+  {;; info needed for smart asset created on the front-end
    :beneficiary/beneficiary {:db/type :db.type/ref}
    :beneficiary/weight      {:db/cardinality :db.cardinality/one}
    :beneficiary/address     {:db/cardinality :db.cardinality/one}
 
-   ;; refers to smart contracts
+   ;; smart contract related
    :contract/contract {:db/type :db.type/ref}
    :contract/key      {:db/cardinality :db.cardinality/one}
-   :contract/abi      {:db/cardinality :db.cardinality/one}})
+   :contract/abi      {:db/cardinality :db.cardinality/one}
+   :contract/bin      {:db/cardinality :db.cardinality/one}
+   :contract/instance {:db/cardinality :db.cardinality/one}
+
+   ;; the from address for transactions
+   :blockchain/active-account {:db/cardinality :db.cardinality/one}})
 
 (defonce conn
   (d/create-conn schema))
