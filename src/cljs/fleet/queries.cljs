@@ -74,8 +74,11 @@
 
 (defn fetch-instance [contract-key]
   (println "getting instance for" contract-key)
-  (d/q '[:find ?instance .
-         :in $ ?key
-         :where [?e :blockchain/key ?key]
-                [?e :blockchain/instance ?instance]]
-       @contract-db contract-key))
+  (let [instance (or (d/q '[:find ?instance .
+                            :in $ ?key
+                            :where [?e :blockchain/key ?key]
+                            [?e :blockchain/instance ?instance]]
+                          @contract-db contract-key))]
+    (or instance
+        (throw (ex-info "No instance of smart contract in database"
+                        {:contract-key contract-key})))))

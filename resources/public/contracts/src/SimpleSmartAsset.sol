@@ -124,15 +124,13 @@ contract SimpleSmartAssetManager is Mortal, Greeter {
     SimpleSmartAsset(addr).remove();
   }
 
-  function assetUsed(string name) {
+  function assetUsed(string name) payable {
     address assetAddress = simpleSmartAssets[name];
     assetAddress.transfer(msg.value);
-    SimpleSmartAsset(addr).pay();
+    SimpleSmartAsset(assetAddress).pay();
   }
 
   function remove() onlyOwner {
     selfdestruct(msg.sender);
   }
-
-  function() payable {}
 }
