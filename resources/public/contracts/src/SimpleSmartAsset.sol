@@ -118,23 +118,19 @@ contract SimpleSmartAssetManager is Mortal, Greeter {
     require(simpleSmartAssets[name] == address(0x0));
 
     address assetAddress = new SimpleSmartAsset(usagePrice, addresses, weights);
-
-    simpleSmartAssets[name] = assetAddress;
-    assetAddress.transfer(msg.value);
   }
 
-  function selfdestructSmartAsset(address addr)
-    onlyOwner {
+  function selfdestructSmartAsset(address addr) onlyOwner {
     SimpleSmartAsset(addr).remove();
   }
 
   function assetUsed(string name) {
-    address addr = simpleSmartAssets[name];
+    address assetAddress = simpleSmartAssets[name];
+    assetAddress.transfer(msg.value);
     SimpleSmartAsset(addr).pay();
   }
 
-  function remove()
-    onlyOwner {
+  function remove() onlyOwner {
     selfdestruct(msg.sender);
   }
 
