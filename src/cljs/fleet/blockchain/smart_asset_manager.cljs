@@ -18,7 +18,7 @@
                     :beneficiary/weight))
          transpose)))
 
-(defn create-smart-asset [name usage-price beneficiaries]
+(defn create [name usage-price beneficiaries]
   (let [account             (queries/fetch-active-account)
         instance            (queries/fetch-instance contract-key)
         data                {:from  account
@@ -43,7 +43,7 @@
                             asset-name
                             data)))
 
-(get-usage-price "foo")
+#_(get-usage-price "foo")
 
 (defn asset-used [name]
   #_(let [account  (queries/fetch-active-account)

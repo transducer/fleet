@@ -136,7 +136,7 @@
                                      (js/parseInt
                                       (-> % .-target .-value)))}]]
        [:button.button {:on-click
-                        #(println (asset-manager/create-smart-asset
+                        #(println (asset-manager/create
                                    @asset-name
                                    @usage-price
                                    @beneficiaries))}
