@@ -12,5 +12,8 @@ TODO:
 - Error handling
 - Input validation
 
+web3.js
+- Add documentation
+
 QUESTIONS
 Can we pass array of structs from web3?
