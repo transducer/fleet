@@ -1,20 +1,28 @@
 (ns fleet.blockchain
+  (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require [ajax.core :as ajax]
             [cljs-web3.core :as web3]
             [cljs-web3.eth :as web3-eth]
             [cljs-web3.personal :as web3-personal]
+            [cljs-web3.utils :as web3-utils]
+            [cljs.core.async :as async]
             [cljsjs.web3]
             [fleet.blockchain.constants :as constants]
             [fleet.blockchain.files :as files]
             [fleet.blockchain.utils :as utils]
-            [fleet.queries :as queries]
-            [goog.string :as string]
-            [goog.string.format]))
+            [fleet.queries :as queries]))
 
 (enable-console-print!)
 
-(def web3-instance #_js/web3
-  (web3/create-web3 "http://localhost:8545/"))
+(def web3-instance js/web3
+  #_(web3/create-web3 "http://localhost:8545/"))
+
+(def network-type
+  (case (web3/version-network web3-instance)
+    "1" :local-development ; FIXME: same as main-net
+    "2" :morden-network    ; deprecated
+    "3" :ropsten-network
+    :unknown-network))
 
 (defn unlock-own-account []
   (let [account      (first (web3-eth/accounts web3-instance))
@@ -28,6 +36,26 @@
 (defn set-active-address []
   (let [account (first (web3-eth/accounts web3-instance))]
     (queries/set-active-account account)))
+
+(defn add-compiled-contract
+  "Retrieve :abi and :bin of smart contract with contract-key and store in db"
+  [contract-key]
+  (go (let [result-chans      (map
+                               (partial files/fetch-contract-code
+                                        contract-key)
+                               [:abi :bin])
+            {:keys [abi bin]} (async/<!
+                               (go-loop [acc {}
+                                         chans result-chans]
+                                 (let [c (first chans)]
+                                   (if c
+                                     (recur (merge acc
+                                                   (async/<! c))
+                                            (next chans))
+                                     acc))))]
+        (queries/upsert-contract contract-key
+                                 (utils/format-abi abi)
+                                 (utils/format-bin bin)))))
 
 (defn deploy-contract [key]
   (let [{:keys [:contract/abi :contract/bin]}
@@ -52,12 +80,41 @@
                            data
                            handler)))
 
+(defn add-ropsten-contract [contract-key address]
+  (go (let [result-chan   (files/fetch-contract-code contract-key
+                                                     :abi)
+            {:keys [abi]} (go (async/<! result-chan))
+            handler (fn [err contract]
+                      (if-not err
+                        (do
+                          (queries/add-instance contract-key
+                                                contract)
+                          (queries/add-address contract-key
+                                               address))
+                        (println "error adding contract" err)))]
+        (web3-eth/contract-at web3-instance
+                              abi
+                              address
+                              handler))))
+
 (defn init []
+
+  ;; Setup db
   (files/add-compiled-contract :simplesmartassetmanager)
-  (unlock-own-account)
   (set-active-address)
-  (js/setTimeout (fn [] (deploy-contract :simplesmartassetmanager))
-                 3000))
+
+  (case network-type
+    :local-development
+    (js/setTimeout (fn []
+                     (deploy-contract :simplesmartassetmanager))
+                   3000)
+
+    :ropsten-network
+    (let [address "0xba1a1fdf2aba37d4855070ccc828deca192bda0e"]
+      (add-ropsten-contract :simplesmartassetmanager address))
+
+    :default
+    (throw (ex-info "unknown network" {:type network-type}))))
 
 ;; (init)
 ;; (deploy-contract :simplesmartassetmanager)

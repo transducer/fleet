@@ -31,18 +31,3 @@
                      :handler         handler}]
     (ajax/ajax-request request)
     result-chan))
-
-(defn add-compiled-contract
-  "Retrieve :abi and :bin of smart contract with contract-key and store in db"
-  [contract-key]
-  (go (let [result-chans      (map (partial fetch-contract-code contract-key) [:abi :bin])
-            {:keys [abi bin]} (async/<!
-                               (go-loop [acc {}, chans result-chans]
-                                 (let [c (first chans)]
-                                   (if c
-                                     (recur (merge acc (async/<! c))
-                                            (next chans))
-                                     acc))))]
-        (queries/upsert-contract contract-key
-                                 (utils/format-abi abi)
-                                 (utils/format-bin bin)))))
