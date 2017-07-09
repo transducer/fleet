@@ -1,7 +1,6 @@
 TODO:
 - werkend contract
-- Simulator
-- web3 object
+  1. Laatste versie (met value) testen met --debug vlag op geth.
 - Deployment IPFS
 - Deployment echte chain
 
