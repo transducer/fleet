@@ -13,11 +13,7 @@
 
 (enable-console-print!)
 
-(defn sha3 []
-  (web3/sha3 "2"))
-
-(def web3-instance
-  #_js/web3
+(def web3-instance #_js/web3
   (web3/create-web3 "http://localhost:8545/"))
 
 (defn unlock-own-account []
@@ -34,7 +30,8 @@
     (queries/set-active-account account)))
 
 (defn deploy-contract [key]
-  (let [{:keys [:contract/abi :contract/bin]} (queries/fetch-contract key)
+  (let [{:keys [:contract/abi :contract/bin]}
+        (queries/fetch-contract key)
 
         data {:gas  constants/max-gas-limit
               :data bin
