@@ -64,10 +64,11 @@ contract SimpleSmartAsset is Mortal {
   event BeneficiariesPaid;
 
   function pay() {
+
+    require(this.balance > usagePrice);
+
     uint beneficiaryCount = beneficiaries.length;
     for (uint i = 0; i < beneficiaryCount; i++) {
-
-      require(this.balance > usagePrice);
 
       Beneficiary memory beneficiary = beneficiaries[i]; // memory does not use storage
 
