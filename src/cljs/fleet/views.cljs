@@ -123,7 +123,7 @@
 
 (defn add-smart-asset []
   (let [asset-name    (r/atom "dryer")
-        usage-price   (r/atom 1)
+        usage-price   (r/atom 0.1)
         beneficiaries (reaction (queries/get-beneficiaries))]
     (fn []
       [:div
@@ -134,15 +134,14 @@
                                      (-> % .-target .-value))}]]
        [:br]
        [:span "Usage price of asset (in ETH): "
-        [:input {:type      "number"
+        [:input {:type      "text"
                  :value     @usage-price
                  :on-change #(reset! usage-price
-                                     (js/parseInt
-                                      (-> % .-target .-value)))}]]
+                                     (-> % .-target .-value))}]]
        [:button.button {:on-click
                         #(asset-manager/create
                           @asset-name
-                          @usage-price
+                          (js/parseFloat @usage-price)
                           @beneficiaries)}
         "Publish on the blockchain"]])))
 
