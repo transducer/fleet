@@ -97,7 +97,7 @@
   (set-active-address)
 
   ;; Wait till db ready in an ugly way...
-  (js/setTimeOut
+  (js/setTimeout
    (fn []
      (case network-type
        :local-development
