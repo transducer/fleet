@@ -23,21 +23,33 @@
         instance            (queries/fetch-instance contract-key)
         data                {:from  account
                              :gas   constants/max-gas-limit}
+        handler             (fn [err result]
+                              (if-not err
+                                (println "smart asset created"
+                                         result)
+                                (println "something went wrong"
+                                         err)))
         [addresses weights] (addresses-and-weights beneficiaries)]
-    (println (web3-eth/contract-call instance
-                                     :create-smart-asset
-                                     asset-name
-                                     usage-price
-                                     (rest addresses)
-                                     weights
-                                     data))))
+    (web3-eth/contract-call instance
+                            :create-smart-asset
+                            asset-name
+                            (web3/to-wei usage-price :ether)
+                            addresses
+                            weights
+                            data
+                            handler)))
 
 (defn use-asset [asset-name]
   (let [account  (queries/fetch-active-account)
         instance (queries/fetch-instance contract-key)
         data     {:from account
-                  :gas  constants/max-gas-limit}]
-    (println (web3-eth/contract-call instance
-                                     :use-asset
-                                     asset-name
-                                     data))))
+                  :gas  constants/max-gas-limit}
+        handler  (fn [err result]
+                   (if-not err
+                     (println "smart asset used" result)
+                     (println "something went wrong" err)))]
+    (web3-eth/contract-call instance
+                            :use-asset
+                            asset-name
+                            data
+                            handler)))
