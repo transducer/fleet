@@ -83,38 +83,34 @@
 (defn add-ropsten-contract [contract-key address]
   (go (let [result-chan   (files/fetch-contract-code contract-key
                                                      :abi)
-            {:keys [abi]} (go (async/<! result-chan))
-            handler (fn [err contract]
-                      (if-not err
-                        (do
-                          (queries/add-instance contract-key
-                                                contract)
-                          (queries/add-address contract-key
-                                               address))
-                        (println "error adding contract" err)))]
-        (web3-eth/contract-at web3-instance
-                              abi
-                              address
-                              handler))))
+            {:keys [abi]} (async/<! result-chan)
+            contract      (web3-eth/contract-at web3-instance
+                                                abi
+                                                address)]
+        (queries/add-instance contract-key contract)
+        (queries/add-address contract-key address))))
 
 (defn init []
 
   ;; Setup db
-  (files/add-compiled-contract :simplesmartassetmanager)
+  (add-compiled-contract :simplesmartassetmanager)
   (set-active-address)
 
-  (case network-type
-    :local-development
-    (js/setTimeout (fn []
-                     (deploy-contract :simplesmartassetmanager))
-                   3000)
+  ;; Wait till db ready in an ugly way...
+  (js/setTimeOut
+   (fn []
+     (case network-type
+       :local-development
+       (deploy-contract :simplesmartassetmanager)
 
-    :ropsten-network
-    (let [address "0xba1a1fdf2aba37d4855070ccc828deca192bda0e"]
-      (add-ropsten-contract :simplesmartassetmanager address))
+       :ropsten-network
+       (let [address "0xba1a1fdf2aba37d4855070ccc828deca192bda0e"]
+         (add-ropsten-contract
+          :simplesmartassetmanager address))
 
-    :default
-    (throw (ex-info "unknown network" {:type network-type}))))
+       :default
+       (throw (ex-info "unknown network" {:type network-type}))))
+   3000))
 
 ;; (init)
 ;; (deploy-contract :simplesmartassetmanager)
