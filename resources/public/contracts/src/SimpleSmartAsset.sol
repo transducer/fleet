@@ -64,13 +64,12 @@ contract SimpleSmartAsset is Mortal {
   event BeneficiariesPaid;
 
   function pay() {
-
     require(this.balance > usagePrice);
 
     uint beneficiaryCount = beneficiaries.length;
     for (uint i = 0; i < beneficiaryCount; i++) {
 
-      Beneficiary memory beneficiary = beneficiaries[i]; // memory does not use storage
+      Beneficiary beneficiary = beneficiaries[i];
 
       uint weight = beneficiary.weight;
       address addr = beneficiary.addr;
@@ -130,10 +129,17 @@ contract SimpleSmartAssetManager is Mortal, Greeter {
     SimpleSmartAsset(addr).remove();
   }
 
+  event AssetUsed(string name, uint usagePrice);
+
   function useAsset(string name) payable {
+    uint price = SimpleSmartAsset(assetAddress).getUsagePrice();
+    require (msg.value > price);
+
     address assetAddress = smartAssets[name];
     assetAddress.transfer(msg.value);
     SimpleSmartAsset(assetAddress).pay();
+
+    AssetUsed(name, price);
   }
 
   function remove() onlyOwner {
