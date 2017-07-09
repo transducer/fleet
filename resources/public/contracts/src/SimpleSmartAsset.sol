@@ -39,12 +39,18 @@ contract SimpleSmartAsset is Mortal {
   Beneficiary[] beneficiaries;
   uint totalWeight; // to calculate percentage the beneficiaries receive
 
+  event AssetCreated(uint _usagePrice,
+                     address[] addresses,
+                     uint[] weights);
+
   // Constructor
   function SimpleSmartAsset(uint _usagePrice,
                             address[] addresses,
                             uint[] weights) {
     owner = msg.sender;
     usagePrice = _usagePrice;
+
+    AssetCreated(_usagePrice, addresses, weights);
 
     uint beneficiaryCount = addresses.length;
     for (uint i = 0; i < beneficiaryCount; i++) {
@@ -64,7 +70,7 @@ contract SimpleSmartAsset is Mortal {
   event BeneficiariesPaid;
 
   function pay() {
-    require(this.balance > usagePrice);
+    require(this.balance >= usagePrice);
 
     uint beneficiaryCount = beneficiaries.length;
     for (uint i = 0; i < beneficiaryCount; i++) {
@@ -74,7 +80,7 @@ contract SimpleSmartAsset is Mortal {
       uint weight = beneficiary.weight;
       address addr = beneficiary.addr;
 
-      uint percentage = weight / totalWeight; // FIXME: rounding errors when weight is small
+      uint percentage = weight / totalWeight; // FIXME: rounding
       uint amount = percentage * usagePrice;
 
       addr.transfer(amount);
@@ -132,14 +138,16 @@ contract SimpleSmartAssetManager is Mortal, Greeter {
   event AssetUsed(string name, uint usagePrice);
 
   function useAsset(string name) payable {
-    uint price = SimpleSmartAsset(assetAddress).getUsagePrice();
-    require (msg.value > price);
-
     address assetAddress = smartAssets[name];
+    uint price = SimpleSmartAsset(assetAddress).getUsagePrice();
+
+    AssetUsed(name, price);
+
+    require (msg.value >= price);
+
     assetAddress.transfer(msg.value);
     SimpleSmartAsset(assetAddress).pay();
 
-    AssetUsed(name, price);
   }
 
   function remove() onlyOwner {
