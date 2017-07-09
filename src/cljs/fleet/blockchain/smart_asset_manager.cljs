@@ -32,18 +32,6 @@
                                      weights
                                      data))))
 
-(defn get-usage-price [asset-name]
-  (let [account  (queries/fetch-active-account)
-        instance (queries/fetch-instance contract-key)
-        data     {:from account
-                  :gas  constants/max-gas-limit}]
-    (web3-eth/contract-call instance
-                            :get-usage-price
-                            asset-name
-                            data)))
-
-(println (get-usage-price "foo"))
-
 (defn use-asset [asset-name]
   (let [account  (queries/fetch-active-account)
         instance (queries/fetch-instance contract-key)
@@ -53,6 +41,3 @@
                                      :use-asset
                                      asset-name
                                      data))))
-
-;; :value (web3/to-wei usage-price
-;;                     :ether)

@@ -135,20 +135,6 @@ contract SimpleSmartAssetManager is Mortal, Greeter {
     SimpleSmartAsset(assetAddress).pay();
   }
 
-  event AssetInfo (
-                   string name//,
-    /* address addr, // for debugging */
-    /* uint price */
-  );
-
-  function getUsagePrice(string name) returns (uint) {
-    address addr = simpleSmartAssets[name];
-    uint usagePrice = SimpleSmartAsset(addr).getUsagePrice();
-
-    AssetInfo(name); // FIXME, how to see this? */
-    return usagePrice;
-  }
-
   function remove() onlyOwner {
     selfdestruct(msg.sender);
   }

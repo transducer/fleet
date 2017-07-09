@@ -123,7 +123,7 @@
 
 (defn add-smart-asset []
   (let [asset-name    (r/atom "dryer")
-        usage-price   (r/atom 100)
+        usage-price   (r/atom 1)
         beneficiaries (reaction (queries/get-beneficiaries))]
     (fn []
       [:div
