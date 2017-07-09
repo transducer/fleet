@@ -14,6 +14,13 @@
       [:span.fa.fa-handshake-o]
       [:span.text "Fleet"]]]))
 
+(def use-asset-handler
+  (fn [e]
+    (.preventDefault e)
+    (let [asset-name (js/prompt "Please enter asset name" "dryer")]
+      (when (and asset-name (not= asset-name ""))
+        (asset-manager/use-asset asset-name)))))
+
 (defn menu-panel []
   (fn []
     [:div#menucont.bodycontainer.clearfix
@@ -22,7 +29,11 @@
                       [:strong "Menu"]]]
      [:ul.menu
       [:li.active [:a.active {:href "/" :title "Smart assets"}
-                   "Smart assets"]]]]))
+                   "Smart assets"]]
+      [:li [:a {:href "/"
+                :title "Use asset"
+                :onClick use-asset-handler}
+            "Use asset"]]]]))
 
 (defn social-media []
   (fn []
@@ -118,7 +129,7 @@
          [:p "First add addresses of beneficiaries involved"])])))
 
 (defn add-smart-asset []
-  (let [asset-name    (r/atom "")
+  (let [asset-name    (r/atom "dryer")
         usage-price   (r/atom 100)
         beneficiaries (reaction (queries/get-beneficiaries))]
     (fn []
@@ -136,10 +147,10 @@
                                      (js/parseInt
                                       (-> % .-target .-value)))}]]
        [:button.button {:on-click
-                        #(println (asset-manager/create
-                                   @asset-name
-                                   @usage-price
-                                   @beneficiaries))}
+                        #(asset-manager/create
+                          @asset-name
+                          @usage-price
+                          @beneficiaries)}
         "Publish on the blockchain"]])))
 
 (defn main-panel []
