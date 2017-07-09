@@ -105,7 +105,7 @@ contract SimpleSmartAssetManager is Mortal, Greeter {
 
   address owner;
 
-  mapping(string => address) simpleSmartAssets;
+  mapping(string => address) smartAssets;
 
   // Constructor
   function SimpleSmartAssetManager() {
@@ -118,12 +118,12 @@ contract SimpleSmartAssetManager is Mortal, Greeter {
                              uint[] weights) {
 
     require(addresses.length == weights.length);
-    require(simpleSmartAssets[name] == address(0x0));
+    require(smartAssets[name] == address(0x0));
 
     address assetAddress = new SimpleSmartAsset(usagePrice,
                                                 addresses,
                                                 weights);
-    simpleSmartAssets[name] = assetAddress;
+    smartAssets[name] = assetAddress;
   }
 
   function selfdestructSmartAsset(address addr) onlyOwner {
@@ -131,7 +131,7 @@ contract SimpleSmartAssetManager is Mortal, Greeter {
   }
 
   function useAsset(string name) payable {
-    address assetAddress = simpleSmartAssets[name];
+    address assetAddress = smartAssets[name];
     assetAddress.transfer(msg.value);
     SimpleSmartAsset(assetAddress).pay();
   }
