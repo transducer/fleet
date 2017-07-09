@@ -69,8 +69,8 @@
                         (reset! value (.-target.value e)))}])
 
 (defn add-beneficiary []
-  (let [address (r/atom "")
-        weight  (r/atom 0)]
+  (let [address (r/atom "0xbC965738eAbb38d15dc5d0B63Ec1420EAb5df2BC")
+        weight  (r/atom 100)]
     (fn []
       [:div
        [:h2 "Create new smart asset"]
