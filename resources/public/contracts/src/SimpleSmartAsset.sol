@@ -122,6 +122,7 @@ contract SimpleSmartAssetManager is Mortal, Greeter {
     address assetAddress = new SimpleSmartAsset(usagePrice,
                                                 addresses,
                                                 weights);
+    simpleSmartAssets[name] = assetAddress;
   }
 
   function selfdestructSmartAsset(address addr) onlyOwner {
