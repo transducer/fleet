@@ -69,8 +69,8 @@ contract SimpleSmartAsset is Mortal {
   // Dapp can listen to events
   event BeneficiariesPaid;
 
-  function pay() {
-    require(this.balance >= usagePrice);
+  function pay() payable {
+    require(msg.value >= usagePrice);
 
     uint beneficiaryCount = beneficiaries.length;
     for (uint i = 0; i < beneficiaryCount; i++) {
@@ -100,9 +100,6 @@ contract SimpleSmartAsset is Mortal {
     }));
   }
 
-  // Payable fallback function to receive Ether...
-  function() payable {}
-
 }
 
 
@@ -117,10 +114,10 @@ contract SimpleSmartAssetManager is Mortal, Greeter {
     owner = msg.sender;
   }
 
-  function createSmartAsset (string name,
-                             uint usagePrice,
-                             address[] addresses,
-                             uint[] weights) {
+  function createSmartAsset(string name,
+                            uint usagePrice,
+                            address[] addresses,
+                            uint[] weights) {
 
     require(addresses.length == weights.length);
     require(smartAssets[name] == address(0x0));
@@ -145,8 +142,7 @@ contract SimpleSmartAssetManager is Mortal, Greeter {
 
     require (msg.value >= price);
 
-    assetAddress.transfer(msg.value);
-    SimpleSmartAsset(assetAddress).pay();
+    SimpleSmartAsset(assetAddress).pay.value(msg.value)();
 
   }
 
