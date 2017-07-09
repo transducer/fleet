@@ -40,14 +40,16 @@
                             handler)))
 
 (defn use-asset [asset-name]
-  (let [account  (queries/fetch-active-account)
-        instance (queries/fetch-instance contract-key)
-        data     {:from account
-                  :gas  constants/max-gas-limit}
-        handler  (fn [err result]
-                   (if-not err
-                     (println "smart asset used" result)
-                     (println "something went wrong" err)))]
+  (let [account     (queries/fetch-active-account)
+        instance    (queries/fetch-instance contract-key)
+        usage-price (web3/to-wei 0.1 :ether) ; FIXME, retrieve price
+        data        {:from  account
+                     :gas   constants/max-gas-limit
+                     :value usage-price}
+        handler     (fn [err result]
+                      (if-not err
+                        (println "smart asset used" result)
+                        (println "something went wrong" err)))]
     (web3-eth/contract-call instance
                             :use-asset
                             asset-name
