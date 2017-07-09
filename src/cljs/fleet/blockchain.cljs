@@ -17,12 +17,17 @@
   (web3/sha3 "2"))
 
 (def web3-instance
-  #_(js/web3) ;; FIXME
+  #_js/web3
   (web3/create-web3 "http://localhost:8545/"))
 
 (defn unlock-own-account []
-  (let [account (first (web3-eth/accounts web3-instance))]
-    (web3-personal/unlock-account web3-instance account "password")))
+  (let [account      (first (web3-eth/accounts web3-instance))
+        indefinitely 0]
+    (web3-personal/unlock-account web3-instance
+                                  account
+                                  "password"
+                                  indefinitely
+                                  identity)))
 
 (defn set-active-address []
   (let [account (first (web3-eth/accounts web3-instance))]
