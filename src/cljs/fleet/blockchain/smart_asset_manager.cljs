@@ -18,20 +18,19 @@
                     :beneficiary/weight))
          transpose)))
 
-(defn create [name usage-price beneficiaries]
+(defn create [asset-name usage-price beneficiaries]
   (let [account             (queries/fetch-active-account)
         instance            (queries/fetch-instance contract-key)
         data                {:from  account
                              :gas   constants/max-gas-limit}
         [addresses weights] (addresses-and-weights beneficiaries)]
-    (println name usage-price addresses weights data)
-    (web3-eth/contract-call instance
-                            :create-smart-asset
-                            name
-                            usage-price
-                            addresses
-                            weights
-                            data)))
+    (println (web3-eth/contract-call instance
+                                     :create-smart-asset
+                                     asset-name
+                                     usage-price
+                                     (rest addresses)
+                                     weights
+                                     data))))
 
 (defn get-usage-price [asset-name]
   (let [account  (queries/fetch-active-account)
@@ -43,12 +42,17 @@
                             asset-name
                             data)))
 
-#_(get-usage-price "foo")
+(println (get-usage-price "foo"))
 
-(defn asset-used [name]
-  #_(let [account  (queries/fetch-active-account)
-        instance (queries/fetch-instance contract-key)]
-    (web3-eth/contract-call instance )))
+(defn use-asset [asset-name]
+  (let [account  (queries/fetch-active-account)
+        instance (queries/fetch-instance contract-key)
+        data     {:from account
+                  :gas  constants/max-gas-limit}]
+    (println (web3-eth/contract-call instance
+                                     :use-asset
+                                     asset-name
+                                     data))))
 
 ;; :value (web3/to-wei usage-price
 ;;                     :ether)
