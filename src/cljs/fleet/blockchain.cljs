@@ -111,7 +111,7 @@
        (deploy-contract :simplesmartassetmanager)
 
        :ropsten-network
-       (let [address "0x882a20d4e89eb83202af8ee4ea98d2719bd5e774"]
+       (let [address "0xa01f7d227a0925863c14d5112d57f81b16ae9d57"]
          (add-ropsten-contract :simplesmartassetmanager address))
 
        :default
