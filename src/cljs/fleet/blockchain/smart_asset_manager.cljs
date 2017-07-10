@@ -1,7 +1,10 @@
 (ns fleet.blockchain.smart-asset-manager
   "Mapping to the Simple Smart Asset Manager contract"
-  (:require [cljs-web3.core :as web3]
+  (:require-macros [cljs.core.async.macros :refer [go]])
+  (:require [ajax.core :as ajax]
+            [cljs-web3.core :as web3]
             [cljs-web3.eth :as web3-eth]
+            [cljs.core.async :as async]
             [fleet.blockchain.constants :as constants]
             [fleet.queries :as queries]))
 
@@ -47,22 +50,34 @@
                             data
                             handler)))
 
-(defn get-usage-price)
+(defn get-usage-price
+  "Returns ETH-value of usage price of asset-name on channel"
+  [asset-name]
+  (let [to-float-xf (map #(js/parseFloat %))
+        result-chan (async/chan 1 to-float-xf)
+        instance    (queries/fetch-instance contract-key)]
+    (web3-eth/contract-call instance
+                            :get-usage-price
+                            asset-name
+                            (fn [err result]
+                              (if-not err
+                                (go (async/>! result-chan result))
+                                (println "Error:" err))))
+    result-chan))
 
 (defn use-asset [asset-name]
-  (let [account     (queries/fetch-active-account)
-        instance    (queries/fetch-instance contract-key)
-        usage-price (web3/to-wei 0.01 :ether) ; FIXME, retrieve price
-        data        {:from  account
-                     :gas   constants/max-gas-limit
-                     :value usage-price}
-        handler     (fn [err result]
-                      (if-not err
-                        (println "smart asset used" result)
-                        (println "something went wrong" err)))]
-    (web3-eth/contract-call instance
-                            :use-asset
-                            asset-name
-                            data
-                            handler)))
+  (go (let [account     (queries/fetch-active-account)
+            instance    (queries/fetch-instance contract-key)
+            usage-price (async/<! (get-usage-price asset-name))
+            price-eth   (web3/from-wei usage-price :ether)
+            data        {:from  account
+                         :gas   constants/max-gas-limit
+                         :value usage-price}
             handler     default-handler]
+        (println "using" asset-name "with usage price" price-eth
+                 "ETH")
+        (web3-eth/contract-call instance
+                                :use-asset
+                                asset-name
+                                data
+                                handler))))

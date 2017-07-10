@@ -132,11 +132,26 @@ contract SimpleSmartAssetManager is Mortal, Greeter {
     SimpleSmartAsset(addr).remove();
   }
 
+  function getUsagePrice(string assetName)
+    constant returns (uint) {
+    address assetAddress = smartAssets[assetName];
+    uint price = getUsagePrice(assetAddress);
+
+    return price;
+  }
+
+  function getUsagePrice(address assetAddress)
+    constant returns (uint) {
+    uint price = SimpleSmartAsset(assetAddress).getUsagePrice();
+
+    return price;
+  }
+
   event AssetUsed(string name, uint usagePrice);
 
   function useAsset(string name) payable {
     address assetAddress = smartAssets[name];
-    uint price = SimpleSmartAsset(assetAddress).getUsagePrice();
+    uint price = getUsagePrice(assetAddress);
 
     AssetUsed(name, price);
 
