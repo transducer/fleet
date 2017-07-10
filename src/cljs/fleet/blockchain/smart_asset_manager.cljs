@@ -16,6 +16,14 @@
                                 (println res)
                                 (println "Error:" err))))))
 
+(def default-handler
+  (fn [err result]
+    (if-not err
+      (println "submitted to network awaiting inclusion in a block"
+               result)
+      (println "something went wrong"
+               err))))
+
 (defn addresses-and-weights [beneficiaries]
   (let [transpose (partial apply mapv vector)]
     (->> beneficiaries
@@ -28,12 +36,7 @@
         instance            (queries/fetch-instance contract-key)
         data                {:from  account
                              :gas   constants/max-gas-limit}
-        handler             (fn [err result]
-                              (if-not err
-                                (println "smart asset created"
-                                         result)
-                                (println "something went wrong"
-                                         err)))
+        handler             default-handler
         [addresses weights] (addresses-and-weights beneficiaries)]
     (web3-eth/contract-call instance
                             :create-smart-asset
@@ -62,3 +65,4 @@
                             asset-name
                             data
                             handler)))
+            handler     default-handler]
