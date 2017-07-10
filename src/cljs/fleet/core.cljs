@@ -1,5 +1,6 @@
 (ns fleet.core
-  (:require [fleet.config :as config]
+  (:require [fleet.blockchain :as blockchain]
+            [fleet.config :as config]
             [fleet.views :as views]
             [reagent.core :as r]))
 
@@ -13,7 +14,12 @@
     (render [views/main-panel])))
 
 (defn ^:export mount []
-  (render [views/main-panel]))
+  (if blockchain/provides-web3?
+    (do
+      (blockchain/init)
+      (render [views/main-panel]))
+    (render [views/no-web3-panel])))
 
 (defn ^:export reload []
-  (rerender))
+  (when blockchain/provides-web3?
+    (rerender)))

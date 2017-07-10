@@ -14,6 +14,9 @@
 
 (enable-console-print!)
 
+(def provides-web3?
+  (boolean (aget js/window "web3")))
+
 (def web3-instance js/web3
   #_(web3/create-web3 "http://localhost:8545/"))
 

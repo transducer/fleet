@@ -28,10 +28,11 @@
    [:ul.menu
     [:li.active [:a.active {:href "/" :title "Smart assets"}
                  "Smart assets"]]
-    [:li [:a {:href "/"
-              :title "Use asset"
-              :onClick use-asset-handler}
-          "Use asset"]]]])
+    (when blockchain/provides-web3?
+      [:li [:a {:href    "/"
+                :title   "Use asset"
+                :onClick use-asset-handler}
+            "Use asset"]])]])
 
 (defn social-media []
   [:div#socialmedia.clearfix
@@ -62,6 +63,19 @@
  usage will be deducted from the consumer, and the added beneficiaries involved
  will be paid the relative weight (their weight as percentage of total
  weight)."])
+
+(defn no-web3-explanation []
+  [:div "This website works with Web3. Please install the "
+   [:a {:rel  "external"
+        :href "https://metamask.io/"}
+    "MetaMask extension"] ", "
+   [:a {:rel  "external"
+        :href "https://github.com/ethereum/mist"}
+    "Mist Browser"]
+   " or "
+   [:a {:rel "external" :href "https://parity.io/"}
+    "Parity Browser"]
+   "."])
 
 (defn slider [value min max]
   [:input {:type "range" :value @value :min min :max max
@@ -160,4 +174,16 @@
      [beneficiaries]
      [:br]
      [add-smart-asset]
+     [footer]]]])
+
+(defn no-web3-panel []
+  [:div
+   [:div#left
+    [logo]
+    [menu-panel]
+    [social-media]]
+   [:div#right.clearfix
+    [:div#custom-page
+     [page-header]
+     [no-web3-explanation]
      [footer]]]])
