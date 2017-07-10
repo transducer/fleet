@@ -108,49 +108,8 @@
        (deploy-contract :simplesmartassetmanager)
 
        :ropsten-network
-       (let [address "0x17e4f8834d1f28b7f4a22d365a304e3b386f7475"]
-         (add-ropsten-contract
-          :simplesmartassetmanager address))
+       (let [address "0x882a20d4e89eb83202af8ee4ea98d2719bd5e774"]
+         (add-ropsten-contract :simplesmartassetmanager address))
 
        :default
        (throw (ex-info "unknown network" {:type network-type}))))))
-
-;; (init)
-;; (deploy-contract :simplesmartassetmanager)
-;; (web3-eth/contract-call (queries/fetch-instance :simplesmartassetmanager) :set-greeting "Hello from the Greeter smart contract" {:from (queries/fetch-active-account)})
-
-#_(cljs-web3.eth/contract-call web3-instance (fleet.queries/get-contract :greeter) :greet)
-
-;; TODO:
-#_(add-compiled-contract :mortal)
-#_(deploy-contract :mortal)
-
-#_(queries/fetch-active-account)
-
-#_(unlock-own-account)
-
-#_(deploy-compiled-code (clj->js [{:constant false, :inputs [], :name "kill", :outputs [], :payable false, :type :function} {:inputs [], :payable false, :type :constructor}]) (str "0x" "6060604052341561000c57fe5b5b60008054600160a060020a03191633600160a060020a03161790555b5b609c806100386000396000f300606060405263ffffffff60e060020a60003504166341c0e1b581146020575bfe5b3415602757fe5b602d602f565b005b6000543373ffffffffffffffffffffffffffffffffffffffff90811691161415606d5760005473ffffffffffffffffffffffffffffffffffffffff16ff5b5b5600a165627a7a723058209fc9d0ffd32ede3c45bfe55e768fc83bebcd433328c2b4572ce06b53bd483cbb0029"))
-
-;; When successful:
-;; {:keys [db]} [contract-key code-type code]
-#_(let [code (if (= code-type :abi) (clj->js code) (str "0x" code))
-          contract (get-contract db contract-key)
-          contract-address (:address contract)]
-      (let [new-db (cond-> db
-                     true
-                     (assoc-in [:eth/contracts contract-key code-type] code)
-
-                     (= code-type :abi)
-                     (update-in [:eth/contracts contract-key] merge
-                                (when contract-address
-                                  {:instance (web3-eth/contract-at (:web3 db) code contract-address)})))]
-        (merge
-          {:db new-db
-           :dispatch-n (remove nil?
-                               [(when (all-contracts-loaded? new-db)
-                                  [:eth-contracts-loaded])
-                                (when (and (= code-type :abi)
-                                           (= contract-key :ethlance-config))
-                                  [:contract.config/setup-listeners])
-                                (when (and (= code-type :abi) (:setter? contract) contract-address)
-                                  [:contract/load-and-listen-setter-status contract-key])])})))
