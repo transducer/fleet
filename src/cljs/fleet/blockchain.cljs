@@ -14,8 +14,8 @@
 
 (enable-console-print!)
 
-(def web3-instance js/web3
-  #_(web3/create-web3 "http://localhost:8545/"))
+(def web3-instance #_js/web3
+  (web3/create-web3 "http://localhost:8545/"))
 
 (def network-type
   (case (web3/version-network web3-instance)
@@ -99,6 +99,7 @@
   ;; Setup db
   (add-compiled-contract :simplesmartassetmanager)
   (set-active-address)
+  (unlock-own-account)
 
   (wait-till-contracts-ready
    (fn []
