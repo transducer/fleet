@@ -29,7 +29,6 @@ contract SimpleSmartAsset is Mortal {
                      address[] addresses,
                      uint[] weights);
 
-  // Constructor
   function SimpleSmartAsset(uint _usagePrice,
                             address[] addresses,
                             uint[] weights) {
@@ -52,8 +51,7 @@ contract SimpleSmartAsset is Mortal {
     return usagePrice;
   }
 
-  // Dapp can listen to events
-  event BeneficiaryPaid(address addr);
+  event BeneficiaryPaid(address addr, uint amount);
 
   function pay() payable onlyOwner {
     require(msg.value >= usagePrice);
@@ -61,7 +59,7 @@ contract SimpleSmartAsset is Mortal {
     uint beneficiaryCount = beneficiaries.length;
     for (uint i = 0; i < beneficiaryCount; i++) {
 
-      Beneficiary beneficiary = beneficiaries[i];
+      Beneficiary memory beneficiary = beneficiaries[i];
 
       uint weight = beneficiary.weight;
       address addr = beneficiary.addr;
@@ -70,7 +68,7 @@ contract SimpleSmartAsset is Mortal {
       uint amount = percentage * usagePrice;
 
       addr.transfer(amount);
-      BeneficiaryPaid(addr);
+      BeneficiaryPaid(addr, amount);
     }
   }
 
@@ -93,7 +91,6 @@ contract SimpleSmartAssetManager is Mortal {
 
   mapping(string => address) smartAssets;
 
-  // Constructor
   function SimpleSmartAssetManager() {
     owner = msg.sender;
   }
