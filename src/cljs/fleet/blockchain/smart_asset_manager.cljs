@@ -37,8 +37,8 @@
 (defn create [asset-name usage-price beneficiaries]
   (let [account             (queries/fetch-active-account)
         instance            (queries/fetch-instance contract-key)
-        data                {:from  account
-                             :gas   constants/max-gas-limit}
+        data                {:from account
+                             :gas  constants/max-gas-limit}
         [addresses weights] (addresses-and-weights beneficiaries)]
     (web3-eth/contract-call instance
                             :create-smart-asset
