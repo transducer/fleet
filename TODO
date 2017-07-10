@@ -8,9 +8,13 @@ TODO:
 - This, in combination with distributed ledgers has the ability to provide a framework for the collective governance of a group. For example, for a circular value network in which materials and products are shared as well as risks and returns.
 
 - Unit test smart contract
+- Set gas limit higher than 2300
 - Error handling
 - Input validation
 - spec
+
+Frontend
+- Fix bug in deletion
 
 web3.js
 - Add documentation
