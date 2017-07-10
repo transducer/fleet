@@ -9,7 +9,12 @@
 
 (defn say-hello []
   (let [instance (queries/fetch-instance contract-key)]
-    (web3-eth/contract-call instance :greet)))
+    (web3-eth/contract-call instance
+                            :greet
+                            (fn [err res]
+                              (if-not err
+                                (println res)
+                                (println "Error:" err))))))
 
 (defn addresses-and-weights [beneficiaries]
   (let [transpose (partial apply mapv vector)]
@@ -39,10 +44,12 @@
                             data
                             handler)))
 
+(defn get-usage-price)
+
 (defn use-asset [asset-name]
   (let [account     (queries/fetch-active-account)
         instance    (queries/fetch-instance contract-key)
-        usage-price (web3/to-wei 0.1 :ether) ; FIXME, retrieve price
+        usage-price (web3/to-wei 0.01 :ether) ; FIXME, retrieve price
         data        {:from  account
                      :gas   constants/max-gas-limit
                      :value usage-price}
