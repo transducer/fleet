@@ -128,10 +128,6 @@ contract SimpleSmartAssetManager is Mortal, Greeter {
     smartAssets[name] = assetAddress;
   }
 
-  function selfdestructSmartAsset(address addr) onlyOwner {
-    SimpleSmartAsset(addr).remove();
-  }
-
   function getUsagePrice(string assetName)
     constant returns (uint) {
     address assetAddress = smartAssets[assetName];
@@ -161,7 +157,8 @@ contract SimpleSmartAssetManager is Mortal, Greeter {
 
   }
 
-  function remove() onlyOwner {
-    selfdestruct(msg.sender);
+  function removeAsset(string name) onlyOwner {
+    address assetAddress = smartAssets[name];
+    SimpleSmartAsset(assetAddress).remove();
   }
 }

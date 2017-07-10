@@ -79,3 +79,25 @@
                                 asset-name
                                 data
                                 default-handler))))
+
+(defn remove-asset [asset-name]
+  (let [account  (queries/fetch-active-account)
+        instance (queries/fetch-instance contract-key)
+        data     {:from account
+                  :gas  constants/max-gas-limit}]
+    (web3-eth/contract-call instance
+                            :remove-asset
+                            asset-name
+                            data
+                            default-handler)))
+
+(defn remove-contract [address]
+  (let [account  (queries/fetch-active-account)
+        instance (queries/fetch-instance contract-key)
+        data     {:from account
+                  :gas  constants/max-gas-limit}]
+    (web3-eth/contract-call instance
+                            :remove
+                            address
+                            data
+                            default-handler)))
