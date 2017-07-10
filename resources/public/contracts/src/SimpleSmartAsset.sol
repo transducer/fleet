@@ -67,7 +67,7 @@ contract SimpleSmartAsset is Mortal {
   }
 
   // Dapp can listen to events
-  event BeneficiariesPaid;
+  event BeneficiaryPaid(address addr);
 
   function pay() payable {
     require(msg.value >= usagePrice);
@@ -84,8 +84,8 @@ contract SimpleSmartAsset is Mortal {
       uint amount = percentage * usagePrice;
 
       addr.transfer(amount);
+      BeneficiaryPaid(addr);
     }
-    BeneficiariesPaid();
   }
 
   struct Beneficiary {
