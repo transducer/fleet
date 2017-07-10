@@ -64,8 +64,7 @@ contract SimpleSmartAsset is Mortal {
       uint weight = beneficiary.weight;
       address addr = beneficiary.addr;
 
-      uint percentage = weight / totalWeight; // FIXME: rounding
-      uint amount = percentage * usagePrice;
+      uint amount = (weight * usagePrice) / totalWeight;
 
       addr.transfer(amount);
       BeneficiaryPaid(addr, amount);
