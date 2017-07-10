@@ -90,27 +90,29 @@
         (queries/add-instance contract-key contract)
         (queries/add-address contract-key address))))
 
+(defn wait-till-contracts-ready [deploy-fn]
+  ;; Wait till db ready for three seconds...
+  (js/setTimeout deploy-fn 3000))
+
 (defn init []
 
   ;; Setup db
   (add-compiled-contract :simplesmartassetmanager)
   (set-active-address)
 
-  ;; Wait till db ready in an ugly way...
-  (js/setTimeout
+  (wait-till-contracts-ready
    (fn []
      (case network-type
        :local-development
        (deploy-contract :simplesmartassetmanager)
 
        :ropsten-network
-       (let [address "0xba1a1fdf2aba37d4855070ccc828deca192bda0e"]
+       (let [address "0x17e4f8834d1f28b7f4a22d365a304e3b386f7475"]
          (add-ropsten-contract
           :simplesmartassetmanager address))
 
        :default
-       (throw (ex-info "unknown network" {:type network-type}))))
-   3000))
+       (throw (ex-info "unknown network" {:type network-type}))))))
 
 ;; (init)
 ;; (deploy-contract :simplesmartassetmanager)
