@@ -1,22 +1,9 @@
 pragma solidity ^0.4.10;
 
 
-contract Greeter {
-
-  function greet() constant returns (string) {
-    return "Hello from the Greeter smart contract";
-  }
-
-}
-
-
 contract Owned {
 
   address owner;
-
-  function owned() {
-    owner = msg.sender;
-  }
 
   modifier onlyOwner {
     require(msg.sender == owner);
@@ -34,7 +21,6 @@ contract Mortal is Owned {
 
 contract SimpleSmartAsset is Mortal {
 
-  address owner;
   uint usagePrice;
   Beneficiary[] beneficiaries;
   uint totalWeight; // to calculate percentage the beneficiaries receive
@@ -69,7 +55,7 @@ contract SimpleSmartAsset is Mortal {
   // Dapp can listen to events
   event BeneficiaryPaid(address addr);
 
-  function pay() payable {
+  function pay() payable onlyOwner {
     require(msg.value >= usagePrice);
 
     uint beneficiaryCount = beneficiaries.length;
@@ -93,7 +79,7 @@ contract SimpleSmartAsset is Mortal {
     uint weight;
   }
 
-  function addBeneficiary(address addr, uint weight) {
+  function addBeneficiary(address addr, uint weight) onlyOwner {
     beneficiaries.push(Beneficiary({
         addr: addr,
         weight: weight
@@ -103,9 +89,7 @@ contract SimpleSmartAsset is Mortal {
 }
 
 
-contract SimpleSmartAssetManager is Mortal, Greeter {
-
-  address owner;
+contract SimpleSmartAssetManager is Mortal {
 
   mapping(string => address) smartAssets;
 
@@ -149,12 +133,11 @@ contract SimpleSmartAssetManager is Mortal, Greeter {
     address assetAddress = smartAssets[name];
     uint price = getUsagePrice(assetAddress);
 
-    AssetUsed(name, price);
-
     require (msg.value >= price);
 
     SimpleSmartAsset(assetAddress).pay.value(msg.value)();
 
+    AssetUsed(name, price);
   }
 
   function removeAsset(string name) onlyOwner {
