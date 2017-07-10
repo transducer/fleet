@@ -50,8 +50,6 @@ contract SimpleSmartAsset is Mortal {
     owner = msg.sender;
     usagePrice = _usagePrice;
 
-    AssetCreated(_usagePrice, addresses, weights);
-
     uint beneficiaryCount = addresses.length;
     for (uint i = 0; i < beneficiaryCount; i++) {
 
@@ -60,6 +58,8 @@ contract SimpleSmartAsset is Mortal {
       addBeneficiary(addresses[i], weight);
       totalWeight += weight;
     }
+
+    AssetCreated(_usagePrice, addresses, weights);
   }
 
   function getUsagePrice() constant returns (uint) {
