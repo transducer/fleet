@@ -39,7 +39,6 @@
         instance            (queries/fetch-instance contract-key)
         data                {:from  account
                              :gas   constants/max-gas-limit}
-        handler             default-handler
         [addresses weights] (addresses-and-weights beneficiaries)]
     (web3-eth/contract-call instance
                             :create-smart-asset
@@ -48,7 +47,7 @@
                             addresses
                             weights
                             data
-                            handler)))
+                            default-handler)))
 
 (defn get-usage-price
   "Returns ETH-value of usage price of asset-name on channel"
@@ -72,12 +71,11 @@
             price-eth   (web3/from-wei usage-price :ether)
             data        {:from  account
                          :gas   constants/max-gas-limit
-                         :value usage-price}
-            handler     default-handler]
+                         :value usage-price}]
         (println "using" asset-name "with usage price" price-eth
                  "ETH")
         (web3-eth/contract-call instance
                                 :use-asset
                                 asset-name
                                 data
-                                handler))))
+                                default-handler))))
