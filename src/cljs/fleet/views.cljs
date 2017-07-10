@@ -56,11 +56,11 @@
    [:h1 "Smart Asset Management"]])
 
 (defn explanation []
-  [:div "Add the addresses of the beneficiaries involved in the smart asset
+  [:div "Add the addresses of the parties involved in the smart asset
  below. Use the slider to set the relative weight of the usage price the
  beneficiary receives on usage of the asset. Then deploy the smart asset
  contract to the Ethereum blockchain. When the asset is used, the price for
- usage will be deducted from the consumer, and the added beneficiaries involved
+ usage will be deducted from the consumer, and the added parties involved
  will be paid the relative weight (their weight as percentage of total
  weight)."])
 
@@ -129,8 +129,7 @@
   (let [beneficiaries (reaction (queries/get-beneficiaries))]
     (fn []
       [:div
-       [:strong "Beneficiaries involved in the asset with their
-                 weight"]
+       [:strong "Parties involved in the asset with their weight"]
        (if-some [beneficiaries @beneficiaries]
          [beneficiary-table beneficiaries]
          [:p "First add addresses of beneficiaries involved"])])))
