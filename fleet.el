@@ -65,12 +65,14 @@
 
 (defun fleet-start ()
   (interactive)
+  (message "Jack in CLJS REPL")
+  (fleet-jack-in*)
   (message "Auto compile Smart Contracts")
   (start-compile-contracts-auto)
   (message "Start local blockchain")
   (start-local-blockchain)
   (sleep-for 10)
-  (message "Attach local shell and check-work.js")
+  (message "Attach local shell with check-work.js")
   (start-attach-shell))
 
 (defun fleet-stop ()
