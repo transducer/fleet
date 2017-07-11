@@ -1,0 +1,48 @@
+@startuml
+Owned <|-- Mortal
+Mortal <|-- SimpleSmartAsset
+Mortal <|-- SimpleSmartAssetManager
+SimpleSmartAsset *-- SimpleSmartAssetManager
+
+class Beneficiary << struct >> {
+  uint weight
+  address address
+}
+hide Beneficiary circle
+
+class Owned {
+  owner
+  modifier onlyOwner
+}
+
+class Mortal { 
+  remove()
+}
+
+class SimpleSmartAsset {
+  uint usagePrice;
+  Beneficiary[] beneficiaries;
+  uint totalWeight; // to calculate percentage the beneficiaries receive
+
+  constructor(uint usagePrice, address[] addresses, uint weights) 
+  addBeneficiary(address addr, uint weight)
+  uint constant getUsagePrice()
+  pay() payable
+  -- events --
+  event BeneficiaryPaid(address addr, uint amount)
+  event AssetCreated(uint usagePrice, address[] addresses, uint weights[]
+}
+
+class SimpleSmartAssetManager {
+  mapping(string => address) smartAssets;
+  createSmartAsset(string name, uint usagePrice, address[] addresses, uint[] weights)
+  useAsset(address assetAddress)
+  getUsagePrice(string assetName)
+  getUsagePrice(address assetAddress)
+  useAsset(string name) payable
+  removeAsset(string name)
+  -- events --
+  event AssetUsed(string name, uint usagePrice)
+}
+
+@enduml

@@ -61,6 +61,14 @@ Wait a bit, then browse to [http://localhost:3449](http://localhost:3449).
 
 Or `clojurescript-jack-in` from Emacs.
 
+## Documentation
+
+To build pum ([PlantUML](http://plantuml.com/download)) file use
+
+```
+java -jar plantuml.jar --png fleet.pum fleet.png && open fleet.png
+```
+
 ## Production Build
 
 
