@@ -10,15 +10,6 @@
 
 (def contract-key :simplesmartassetmanager)
 
-(defn say-hello []
-  (let [instance (queries/fetch-instance contract-key)]
-    (web3-eth/contract-call instance
-                            :greet
-                            (fn [err res]
-                              (if-not err
-                                (println res)
-                                (println "Error:" err))))))
-
 (def default-handler
   (fn [err result]
     (if-not err
