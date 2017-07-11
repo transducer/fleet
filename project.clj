@@ -2,10 +2,10 @@
   :dependencies [
 
                  ;; Our beloved Clojure
-                 [org.clojure/clojure "1.9.0-alpha10"]
-                 [org.clojure/clojurescript "1.9.473"]
+                 [org.clojure/clojure "1.9.0-alpha17"]
+                 [org.clojure/clojurescript "1.9.671"]
 
-                 ;; Blockchain
+                 ;; Blockchain interaction
                  [cljs-web3 "0.19.0-0-2"]
 
                  ;; HTTP
