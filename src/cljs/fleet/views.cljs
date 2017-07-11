@@ -40,7 +40,7 @@
     [:li
      [:a
       {:rel   "external"
-       :href  "https://github.com/erooijak/fleet"
+       :href  "https://github.com/transducer/fleet"
        :title "Github"}
       [:span.fa.fa-github]]]]])
 
