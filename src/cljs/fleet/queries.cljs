@@ -2,7 +2,7 @@
   (:require [datascript.core :as d]
             [fleet.db :refer [conn contract-db]]))
 
-;; Frontend
+;;; Frontend
 
 (defn add-beneficiary [address weight]
   (d/transact! conn [{:db/id -1}
@@ -10,14 +10,15 @@
                       :beneficiary/address     address
                       :beneficiary/weight      weight}]))
 
-(defn get-by-address [address]
+(defn get-beneficiary [address weight]
   (d/q '[:find ?e .
-         :in $ ?address
-         :where [?e :beneficiary/address ?address]]
-       @contract-db address))
+         :in $ ?address ?weight
+         :where [?e :beneficiary/address ?address]
+                [?e :beneficiary/weight ?weight]]
+       @contract-db address weight))
 
-(defn remove-beneficiary [address]
-  (d/transact! conn [[:db.fn/retractEntity (get-by-address address)]]))
+(defn remove-beneficiary [address weight]
+  (d/transact! conn [[:db.fn/retractEntity (get-beneficiary address weight)]]))
 
 (defn get-beneficiaries []
   (-> (d/q '[:find [(pull ?e [*]) ...]
@@ -25,7 +26,7 @@
            @contract-db)
       seq))
 
-;; Contract code
+;;; Contract code
 
 (defn fetch-contract [contract-key]
   (d/q '[:find (pull ?e [*]) .
@@ -56,7 +57,7 @@
          :where [_ :blockchain/active-account ?name]]
        @contract-db))
 
-;; Blockchained contracts
+;;; Blockchained contracts
 
 (defn add-instance
   "Adds contract instance"

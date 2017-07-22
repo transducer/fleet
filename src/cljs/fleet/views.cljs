@@ -83,7 +83,7 @@
                         (reset! value (.-target.value e)))}])
 
 (defn add-beneficiary []
-  (let [address (r/atom "0xbC965738eAbb38d15dc5d0B63Ec1420EAb5df2BC")
+  (let [address (r/atom "0xe6A8F196629574Cd13a910525e29B59cBDc9F504")
         weight  (r/atom 100)]
     (fn []
       [:div
@@ -122,7 +122,7 @@
        [:td weight]
        [:td [:button.button
              {:on-click
-              #(queries/remove-beneficiary address)}
+              #(queries/remove-beneficiary address weight)}
              "Remove"]]])]])
 
 (defn beneficiaries []
