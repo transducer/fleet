@@ -17,8 +17,8 @@
 (def provides-web3?
   (boolean (aget js/window "web3")))
 
-(def web3-instance #_js/web3
-  (web3/create-web3 "http://localhost:8545/"))
+(def web3-instance js/web3
+  #_(web3/create-web3 "http://localhost:8545/"))
 
 (def network-type
   (case (web3/version-network web3-instance)
@@ -113,6 +113,8 @@
        :ropsten-network
        (let [address "0xa01f7d227a0925863c14d5112d57f81b16ae9d57"]
          (add-ropsten-contract :simplesmartassetmanager address))
+
+       ;; other account 0xe6A8F196629574Cd13a910525e29B59cBDc9F504
 
        :default
        (throw (ex-info "unknown network" {:type network-type}))))))

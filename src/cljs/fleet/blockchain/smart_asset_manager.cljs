@@ -41,7 +41,8 @@
                             default-handler)))
 
 (defn get-usage-price
-  "Returns ETH-value of usage price of asset-name on channel"
+  "Returns gas value (in Wei) of usage price of asset-name
+   on core.async channel"
   [asset-name]
   (let [to-float-xf (map #(js/parseFloat %))
         result-chan (async/chan 1 to-float-xf)
