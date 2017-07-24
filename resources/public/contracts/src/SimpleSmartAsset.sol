@@ -53,6 +53,9 @@ contract SimpleSmartAsset is Mortal {
 
   event BeneficiaryPaid(address addr, uint amount);
 
+  /* TODO: use pull payments pattern
+   * http://solidity.readthedocs.io/en/develop/common-patterns.html#withdrawal-from-contracts 
+   */
   function pay() payable onlyOwner {
     require(msg.value >= usagePrice);
 
@@ -94,6 +97,10 @@ contract SimpleSmartAssetManager is Mortal {
     owner = msg.sender;
   }
 
+  /* TODO: check how many beneficiaries are possible to 
+   * serve without breaking the gas limit and put a hard 
+   * cap on the number of beneficiaries
+   */
   function createSmartAsset(string name,
                             uint usagePrice,
                             address[] addresses,
